@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>СОВЕТСКАЯ ОПЕРАЦИОННАЯ СИСТЕМА v3.11</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+:root{
+  --desk:#008080; --win:#c0c0c0; --bl:#ffffff; --bd:#808080; --bdk:#404040;
+  --titlebg:#000080; --titlefg:#ffffff; --btn:#c0c0c0;
+  --red:#cc0000; --gold:#f4c542;
+  --bg:#000000; --fg:#33ff33; --dim:#1a8c1a;
+  --sys:#ff9900; --err:#ff3333; --hi:#ffff33;
+  --scan:rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Share Tech Mono',monospace;font-size:13px;
+  background:var(--desk);
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);
+  width:100vw;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;cursor:default;user-select:none}
+
+/* ── TASKBAR ── */
+#taskbar{
+  background:var(--win);border-top:2px solid var(--bl);border-bottom:1px solid var(--bd);
+  height:28px;display:flex;align-items:center;padding:0 4px;gap:4px;
+  flex-shrink:0;order:1;position:relative;z-index:999}
+.tb{background:var(--btn);
+  border-top:2px solid var(--bl);border-left:2px solid var(--bl);
+  border-right:2px solid var(--bdk);border-bottom:2px solid var(--bdk);
+  padding:2px 8px;font-family:'Share Tech Mono',monospace;font-size:12px;
+  cursor:pointer;display:flex;align-items:center;gap:4px}
+.tb:active{border-top:2px solid var(--bdk);border-left:2px solid var(--bdk);
+  border-right:2px solid var(--bl);border-bottom:2px solid var(--bl)}
+.tbsep{width:2px;height:20px;border-left:1px solid var(--bd);border-right:1px solid var(--bl);margin:0 2px}
+#clock{margin-left:auto;
+  border-top:2px solid var(--bd);border-left:2px solid var(--bd);
+  border-right:2px solid var(--bl);border-bottom:2px solid var(--bl);
+  padding:2px 6px;font-family:'Share Tech Mono',monospace;font-size:12px;
+  min-width:70px;text-align:center}
+
+/* ── DESKTOP ── */
+#desktop{flex:1;position:relative;overflow:hidden}
+.icon{position:absolute;display:flex;flex-direction:column;align-items:center;
+  width:74px;cursor:pointer;padding:4px}
+.icon:hover .ilabel{background:var(--titlebg);color:#fff}
+.iimg{font-size:30px;line-height:1;margin-bottom:4px;filter:drop-shadow(1px 1px 0 #000)}
+.ilabel{font-family:'Share Tech Mono',monospace;font-size:11px;color:#fff;
+  text-align:center;text-shadow:1px 1px #000;padding:1px 2px;line-height:1.3;word-break:break-word}
+.icon.drive .iimg{filter:drop-shadow(1px 1px 0 #000) drop-shadow(0 0 6px #ffcc00)}
+
+/* ── WINDOWS ── */
+.win{position:absolute;background:var(--win);
+  border-top:2px solid var(--bl);border-left:2px solid var(--bl);
+  border-right:2px solid var(--bdk);border-bottom:2px solid var(--bdk);
+  display:flex;flex-direction:column;min-width:240px;min-height:150px}
+.wtitle{background:var(--titlebg);color:var(--titlefg);
+  padding:3px 4px;display:flex;align-items:center;gap:4px;
+  font-family:'VT323',monospace;font-size:16px;letter-spacing:1px;
+  cursor:move;flex-shrink:0;white-space:nowrap}
+.wtitle .t{flex:1;overflow:hidden;text-overflow:ellipsis}
+.wbtns{display:flex;gap:2px;flex-shrink:0}
+.wbtn{width:16px;height:14px;background:var(--btn);
+  border-top:1px solid var(--bl);border-left:1px solid var(--bl);
+  border-right:1px solid var(--bdk);border-bottom:1px solid var(--bdk);
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;cursor:pointer;font-weight:bold}
+.wbtn:active{border-top:1px solid var(--bdk);border-left:1px solid var(--bdk);
+  border-right:1px solid var(--bl);border-bottom:1px solid var(--bl)}
+.wmenu{background:var(--win);border-bottom:1px solid var(--bd);padding:2px 4px;display:flex;flex-shrink:0}
+.mi{padding:1px 8px;font-size:12px;cursor:pointer;font-family:'Share Tech Mono',monospace}
+.mi:hover{background:var(--titlebg);color:#fff}
+.wcontent{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.rh{position:absolute;bottom:0;right:0;width:12px;height:12px;cursor:se-resize;
+  background:repeating-linear-gradient(-45deg,var(--bd) 0,var(--bd) 1px,transparent 1px,transparent 3px)}
+
+/* ── IRC ── */
+#irc-win{top:20px;left:40px;width:680px;height:480px}
+.irc-layout{display:flex;flex:1;overflow:hidden;border-top:1px solid var(--bd)}
+.irc-sb{width:140px;background:#1a1a1a;border-right:2px solid var(--bdk);
+  display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.sbhdr{background:#003300;color:var(--fg);font-family:'VT323',monospace;font-size:14px;
+  padding:3px 6px;border-bottom:1px solid var(--dim);letter-spacing:1px}
+.chlist,.ulist{flex:1;overflow-y:auto;padding:4px 0;font-family:'Share Tech Mono',monospace;font-size:11px}
+.chi{color:var(--fg);padding:2px 6px;cursor:pointer}
+.chi:hover,.chi.active{background:#003300;color:var(--gold)}
+.chi::before{content:'# ';opacity:.6}
+.sbdiv{height:1px;background:var(--dim);margin:4px 0}
+.ui{color:#88cc88;padding:2px 6px;font-size:11px}
+.ui.op{color:var(--gold)}.ui.op::before{content:'@'}.ui:not(.op)::before{content:' '}
+.irc-main{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;position:relative}
+.irc-main::after{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,var(--scan) 0,var(--scan) 1px,transparent 1px,transparent 3px);
+  pointer-events:none;z-index:10}
+.irc-sb2{background:#001100;border-bottom:1px solid var(--dim);color:var(--dim);
+  font-family:'VT323',monospace;font-size:13px;padding:2px 6px;letter-spacing:1px;flex-shrink:0}
+.irc-log{flex:1;overflow-y:auto;padding:6px 8px;font-family:'Share Tech Mono',monospace;
+  font-size:12px;line-height:1.5;color:var(--fg)}
+.irc-log::-webkit-scrollbar{width:8px}
+.irc-log::-webkit-scrollbar-track{background:#111}
+.irc-log::-webkit-scrollbar-thumb{background:#336633;border:1px solid var(--dim)}
+.ml{display:flex;gap:6px;margin:1px 0}
+.mt{color:var(--dim);flex-shrink:0;font-size:11px;margin-top:1px}
+.mn{flex-shrink:0}.mx{word-break:break-word}
+.ml.system .mx{color:var(--sys);font-style:italic}
+.ml.notice .mx{color:#88ccff}
+.nc0{color:#33ff33}.nc1{color:#ff9933}.nc2{color:#33ccff}.nc3{color:#ff33cc}
+.nc4{color:#ffff33}.nc5{color:#ff6633}.nc6{color:#33ffcc}.nc7{color:#cc33ff}
+.dead-bar{border-top:1px solid var(--dim);background:#0a0a0a;
+  padding:5px 8px;display:flex;align-items:center;gap:8px;flex-shrink:0;
+  color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px}
+.dead-dot{width:8px;height:8px;border-radius:50%;background:var(--dim);opacity:.4;flex-shrink:0}
+.dead-txt{opacity:.5;font-style:italic}
+
+/* ── TERMINAL ── */
+#term-win{top:55px;left:110px;width:600px;height:400px;display:none}
+.term-wrap{flex:1;background:#0a0a0a;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.term-wrap::after{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,var(--scan) 0,var(--scan) 1px,transparent 1px,transparent 3px);
+  pointer-events:none;z-index:2}
+#tout{flex:1;overflow-y:auto;padding:10px 12px;color:var(--fg);
+  font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.65;
+  white-space:pre-wrap;word-break:break-all;position:relative;z-index:1}
+#tout::-webkit-scrollbar{width:8px}
+#tout::-webkit-scrollbar-track{background:#111}
+#tout::-webkit-scrollbar-thumb{background:#336633}
+.tin-row{display:flex;align-items:center;border-top:1px solid var(--dim);
+  background:#050505;padding:5px 10px;flex-shrink:0;gap:6px;position:relative;z-index:3}
+#tprompt{color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:12px;
+  flex-shrink:0;white-space:nowrap}
+#tinput{flex:1;background:transparent;border:none;outline:none;color:var(--fg);
+  font-family:'Share Tech Mono',monospace;font-size:12px;caret-color:var(--fg)}
+
+/* terminal text classes */
+.te{color:var(--err)}.tw{color:var(--sys)}.to{color:var(--fg)}
+.td{color:var(--dim)}.th{color:var(--hi)}.tc{color:#33ffff}.tg{color:#555}
+
+/* ── FILE VIEWER ── */
+#file-win{top:70px;left:140px;width:620px;height:460px;display:none}
+.fwrap{flex:1;background:#000;overflow-y:auto;padding:12px 16px;
+  font-family:'Share Tech Mono',monospace;font-size:12px;
+  color:var(--fg);line-height:1.65;white-space:pre-wrap;position:relative}
+.fwrap::after{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,var(--scan) 0,var(--scan) 1px,transparent 1px,transparent 3px);
+  pointer-events:none}
+.fwrap::-webkit-scrollbar{width:8px}
+.fwrap::-webkit-scrollbar-track{background:#111}
+.fwrap::-webkit-scrollbar-thumb{background:#336633}
+.fhdr{color:var(--hi);font-family:'VT323',monospace;font-size:15px;letter-spacing:1px;
+  border-bottom:1px solid var(--dim);padding-bottom:6px;margin-bottom:10px;display:block}
+.fsys{color:var(--sys);font-style:italic}
+.fdim{color:var(--dim)}
+.fn1{color:#ff9933}.fn2{color:#33ccff}
+
+/* ── SYSINFO ── */
+#sys-win{top:30px;right:30px;width:260px;height:205px}
+.sysc{padding:8px;font-family:'Share Tech Mono',monospace;font-size:11px;
+  background:var(--win);flex:1;overflow:hidden}
+.srow{display:flex;justify-content:space-between;border-bottom:1px dotted var(--bd);padding:3px 0}
+.sk{color:#000080}.sv{color:var(--red);font-weight:bold}
+.emb{text-align:center;font-size:28px;margin:6px 0 4px}
+
+/* ── ABOUT ── */
+#abt-win{top:245px;right:30px;width:260px;height:190px}
+.abtc{padding:10px;font-family:'VT323',monospace;font-size:15px;
+  text-align:center;line-height:1.5;flex:1}
+.ver{font-size:20px;color:var(--titlebg);letter-spacing:2px;display:block;margin:4px 0}
+.copy{font-size:12px;color:var(--bd);margin-top:8px;font-family:'Share Tech Mono',monospace}
+.aok{display:block;margin:8px auto 0;background:var(--btn);
+  border-top:2px solid var(--bl);border-left:2px solid var(--bl);
+  border-right:2px solid var(--bdk);border-bottom:2px solid var(--bdk);
+  padding:2px 20px;font-family:'Share Tech Mono',monospace;font-size:12px;cursor:pointer;font-weight:bold}
+
+/* scrollbars global */
+::-webkit-scrollbar{width:16px}
+::-webkit-scrollbar-track{background:var(--win);border-left:1px solid var(--bd)}
+::-webkit-scrollbar-thumb{background:var(--win);
+  border-top:2px solid var(--bl);border-left:2px solid var(--bl);
+  border-right:2px solid var(--bdk);border-bottom:2px solid var(--bdk)}
+::-webkit-scrollbar-button{background:var(--win);
+  border-top:2px solid var(--bl);border-left:2px solid var(--bl);
+  border-right:2px solid var(--bdk);border-bottom:2px solid var(--bdk);
+  height:16px;display:block}
+
+/* propaganda */
+#prop{background:var(--red);color:var(--gold);font-family:'VT323',monospace;font-size:14px;
+  letter-spacing:3px;text-align:center;padding:2px 0;border-top:2px solid var(--gold);
+  flex-shrink:0;overflow:hidden;white-space:nowrap}
+#ptxt{display:inline-block;animation:mq 25s linear infinite}
+@keyframes mq{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+</style>
+</head>
+<body>
+
+<!-- TASKBAR -->
+<div id="taskbar">
+  <div class="tb">☭ ПУСК</div>
+  <div class="tbsep"></div>
+  <div class="tb" id="tb-irc" onclick="tryIRC()" style="opacity:.5;cursor:not-allowed">📡 МИР-IRC</div>
+  <div class="tb" id="tb-term" onclick="tryTerm()">💾 CAMPEADOR · CCN-UT7</div>
+  <div class="tb" onclick="bringToFront('sys-win')">💻 Система</div>
+  <div class="tb" onclick="bringToFront('abt-win')">ℹ О системе</div>
+  <div id="clock">??:??:??</div>
+</div>
+
+<!-- DESKTOP -->
+<div id="desktop">
+
+  <div class="icon" style="top:10px;left:10px" ondblclick="tryIRC()" id="icon-irc">
+    <div class="iimg" style="opacity:.45;filter:grayscale(1)">📡</div>
+    <div class="ilabel" style="opacity:.5">МИР-IRC 1.0</div>
+  </div>
+  <div class="icon drive" style="top:90px;left:10px" ondblclick="tryTerm()">
+    <div class="iimg">💾</div>
+    <div class="ilabel">CAMPEADOR · CCN-UT7</div>
+  </div>
+  <div class="icon" style="top:170px;left:10px" ondblclick="bringToFront('sys-win')">
+    <div class="iimg">🖥</div><div class="ilabel">Мой компьютер</div>
+  </div>
+  <div class="icon" style="top:250px;left:10px">
+    <div class="iimg">🗑</div><div class="ilabel">Корзина</div>
+  </div>
+
+  <!-- IRC WINDOW (hidden until hacked) -->
+  <div class="win" id="irc-win" onmousedown="bringToFront('irc-win')" style="display:none">
+    <div class="wtitle" onmousedown="startDrag(event,'irc-win')">
+      <span>📡</span><span class="t">МИР-IRC — #техобмен — Международная Революционная Сеть</span>
+      <div class="wbtns">
+        <div class="wbtn">_</div><div class="wbtn">□</div>
+        <div class="wbtn" onclick="closeWin('irc-win')">✕</div>
+      </div>
+    </div>
+    <div class="wmenu">
+      <span class="mi">Файл</span><span class="mi">Правка</span>
+      <span class="mi">Каналы</span><span class="mi">Настройки</span>
+    </div>
+    <div class="wcontent">
+      <div class="irc-layout">
+        <div class="irc-sb">
+          <div class="sbhdr">КАНАЛЫ</div>
+          <div class="chlist">
+            <div class="chi active">техобмен</div>
+            <div class="chi">логистика</div>
+            <div class="chi">персонал</div>
+            <div class="chi">объект_б</div>
+            <div class="chi">архив</div>
+          </div>
+          <div class="sbdiv"></div>
+          <div class="sbhdr">УЧАСТНИКИ</div>
+          <div class="ulist" id="ulist"></div>
+        </div>
+        <div class="irc-main">
+          <div class="irc-sb2">[ МИР-IRC v1.0 ] [ Servidor: 192.168.0.1 ] [ Ping: 87мс ] [ Canal: #техобмен ]</div>
+          <div class="irc-log" id="irclog"></div>
+          <div class="dead-bar">
+            <div class="dead-dot"></div>
+            <span class="dead-txt">[ соединение разорвано — 02:33:51 ] [ только чтение ]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rh" onmousedown="startResize(event,'irc-win')"></div>
+  </div>
+
+  <!-- TERMINAL WINDOW -->
+  <div class="win" id="term-win" onmousedown="bringToFront('term-win')" style="display:none">
+    <div class="wtitle" onmousedown="startDrag(event,'term-win')">
+      <span>💾</span>
+      <span class="t">CAMPEADOR v2.1 — CCN · Unidad Técnica 7 — Op. MANTO ROJO [root@clasificado]</span>
+      <div class="wbtns">
+        <div class="wbtn">_</div>
+        <div class="wbtn" onclick="closeWin('term-win')">✕</div>
+      </div>
+    </div>
+    <div class="wcontent">
+      <div class="term-wrap">
+        <div id="tout"></div>
+        <div class="tin-row">
+          <span id="tprompt">CAM-91▸</span>
+          <input id="tinput" type="text" autocomplete="off" spellcheck="false" onkeydown="handleKey(event)">
+        </div>
+      </div>
+    </div>
+    <div class="rh" onmousedown="startResize(event,'term-win')"></div>
+  </div>
+
+  <!-- RECOVERED FILE WINDOW -->
+  <div class="win" id="file-win" onmousedown="bringToFront('file-win')" style="display:none">
+    <div class="wtitle" onmousedown="startDrag(event,'file-win')">
+      <span>📄</span>
+      <span class="t">VISOR — messagelog1997.irc  [RECUPERADO · DESCIFRADO]</span>
+      <div class="wbtns">
+        <div class="wbtn">_</div>
+        <div class="wbtn" onclick="closeWin('file-win')">✕</div>
+      </div>
+    </div>
+    <div class="wcontent">
+      <div class="fwrap" id="fwrap"></div>
+    </div>
+    <div class="rh" onmousedown="startResize(event,'file-win')"></div>
+  </div>
+
+  <!-- SYSINFO -->
+  <div class="win" id="sys-win" onmousedown="bringToFront('sys-win')">
+    <div class="wtitle" onmousedown="startDrag(event,'sys-win')">
+      <span>💻</span><span class="t">Системная информация</span>
+      <div class="wbtns"><div class="wbtn">_</div><div class="wbtn" onclick="closeWin('sys-win')">✕</div></div>
+    </div>
+    <div class="wcontent">
+      <div class="sysc">
+        <div class="emb">☭</div>
+        <div class="srow"><span class="sk">ОС:</span><span class="sv">СовОС 3.11</span></div>
+        <div class="srow"><span class="sk">Versión:</span><span class="sv">1991.08.19</span></div>
+        <div class="srow"><span class="sk">RAM:</span><span class="sv">640 КБ</span></div>
+        <div class="srow"><span class="sk">CPU:</span><span class="sv">ЭЛЬБРУС-1</span></div>
+        <div class="srow"><span class="sk">Unidad ext.:</span><span class="sv">CAMPEADOR</span></div>
+        <div class="srow"><span class="sk">Usuario:</span><span class="sv">ROOT</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="win" id="abt-win" onmousedown="bringToFront('abt-win')">
+    <div class="wtitle" onmousedown="startDrag(event,'abt-win')">
+      <span>☭</span><span class="t">О системе</span>
+      <div class="wbtns"><div class="wbtn" onclick="closeWin('abt-win')">✕</div></div>
+    </div>
+    <div class="wcontent">
+      <div class="abtc">
+        ☭ СОВЕТСКАЯ ОПЕРАЦИОННАЯ СИСТЕМА ☭
+        <span class="ver">СовОС 3.11</span>
+        Ministerio de Técnica Computacional USSR<br>Moscú, 1991
+        <div class="copy">© Комитет по вычислительной технике<br>Todos los derechos pertenecen al pueblo.</div>
+        <button class="aok" onclick="closeWin('abt-win')">ОК</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /desktop -->
+
+<div id="prop">
+  <span id="ptxt">☭ ПРОЛЕТАРИИ ВСЕХ СТРАН, СОЕДИНЯЙТЕСЬ! ☭ &nbsp;&nbsp;&nbsp; МИР-IRC: ПЕРВАЯ НАРОДНАЯ СЕТЬ ОБМЕНА СООБЩЕНИЯМИ &nbsp;&nbsp;&nbsp; ☭ СЛАВА СОВЕТСКОЙ ВЫЧИСЛИТЕЛЬНОЙ ТЕХНИКЕ! ☭ &nbsp;&nbsp;&nbsp; ПЛАН ПО КИБЕРНЕТИКЕ ВЫПОЛНЕН НА 147% &nbsp;&nbsp;&nbsp; ☭ ДА ЗДРАВСТВУЕТ ТЕХНИЧЕСКИЙ ПРОГРЕСС СОВЕТСКОГО НАРОДА! ☭</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════════
+
+const IRC_USERS = [
+  {nick:"r_zhuk",op:true},{nick:"m_orekhov",op:false},{nick:"stepan_d",op:false},
+  {nick:"SPUTNIK[BOT]",op:true},{nick:"vera14",op:false},
+  {nick:"p_selin",op:false},{nick:"tech_admin",op:true}
+];
+
+const IRC_MSGS = [
+  {time:"02:11",nick:"SPUTNIK[BOT]",type:"system",text:"*** Servidor МИР-IRC v1.0 — Canal #техобмен — cifrado: RC2/40 activo ***"},
+  {time:"02:11",nick:"SPUTNIK[BOT]",type:"system",text:"*** Current date: 1997-05-10 ***"},
+  {time:"02:11",nick:"Golos_Abyssa",type:"normal",text:"Camaradas, he procesado las últimas cintas filtradas del Dr. Prokorov antes de que lo \"desaparecieran\". Es más grande de lo que pensábamos."},
+  {time:"02:12",nick:"Bakunin_97",type:"normal",text:"¿Qué decía el buen Doctor? ¿Más misticismo de laboratorio?"},
+  {time:"02:13",nick:"Golos_Abyssa",type:"normal",text:"No. Ciencia de vanguardia prohibida. Dice que el YT-1 es un \"procesador de probabilidades colapsadas\". En lenguaje humano: PREDICE EL FUTURO."},
+  {time:"02:13",nick:"Radio_Voznesenka",type:"normal",text:"Чёрт! Por eso Volkov lo selló antes de irse. Quería ocultar lo que viene."},
+  {time:"02:13",nick:"Kropotkin_Reptante",type:"normal",text:"Típico de la vieja guardia. Si el Estado no puede controlar el futuro, prefiere que nadie lo vea. Volkov nos ha dejado encerrados en un presente perpetuo mientras él se lleva las llaves de la cronología."},
+  {time:"02:13",nick:"Okupa_Azathoth",type:"normal",text:"Esperad... ¿significa que ya sabe que vamos a entrar?"},
+  {time:"02:17",nick:"Golos_Abyssa",type:"normal",text:"Prokorov sugiere que el YT-1 no solo \"ve\" el futuro, sino que lo CALCULA según los datos que recibe. Por eso es vital nuestro plan de alimentarlo."},
+  {time:"02:18",nick:"Bakunin_97",type:"normal",text:"Exacto. Si le inyectamos datos de colapso sistémico, dejará de predecir \"Orden Estatal\" y empezará a proyectar \"Caos Liberador\"."},
+  {time:"02:19",nick:"Radio_Voznesenka",type:"normal",text:"Volkov selló la montaña porque tenía miedo de la respuesta que el YT-1 le dio sobre el destino de la Madre Rusia. Prefirió enterrar el Oráculo antes que aceptar el fin de su mundo."},
+  {time:"02:20",nick:"Okupa_Azathoth",type:"normal",text:"Me imagino a Volkov cerrando esa puerta reforzada... sabiendo exactamente qué día y a qué hora llegaríamos nosotros. Qué sensación más amarga para un autoritario."},
+  {time:"02:20",nick:"Golos_Abyssa",type:"normal",text:"No importa. Ganaremos acceso. El Dr. Prokorov dejó caer que hay una \"puerta trasera\" en la lógica."},
+  {time:"02:20",nick:"Bakunin_97",type:"normal",text:"Solo tenemos que esperar a que el sistema de seguridad falle por puro abandono. En cuanto el primer guardia acepte un soborno o se duerma en su puesto, conectaremos los módems."},
+  {time:"02:23",nick:"Radio_Voznesenka",type:"normal",text:"Queremos ver el fin del mundo tal como lo conocen."},
+  {time:"02:23",nick:"Golos_Abyssa",type:"normal",text:"Mantened la calma. El futuro ya está escrito en el YT-1, solo estamos esperando a que la burocracia nos entregue la contraseña."},
+
+  {time:"02:11",nick:"SPUTNIK[BOT]",type:"system",text:"*** Servidor МИР-IRC v1.0 — Reconectando... ***"},
+  {time:"02:11",nick:"SPUTNIK[BOT]",type:"system",text:"*** Current date: 1997-07-14 ***"},
+  {time:"01:26",nick:"Golos_Abyssa",type:"normal",text:"¡Atención camaradas! Tenemos ojos dentro. @Cherny_Anarkhiya ha confirmado que su contrato de \"técnico de mantenimiento\" ha sido aprobado por la nueva comandancia."},
+  {time:"01:27",nick:"Bakunin_97",type:"normal",text:"¡Grande @Cherny_Anarkhiya! ¿Cómo está el percal por dentro? ¿Huele a miedo o a vodka?"},
+  {time:"01:30",nick:"Cherny_Anarkhiya",type:"normal",text:"Huele a moho y a desidia, @Antifa. Los oficiales están ocupados robando cable de cobre para venderlo en el mercado negro. A nadie le importa quién soy mientras no haga preguntas."},
+  {time:"01:30",nick:"Radio_Voznesenka",type:"normal",text:"¿Has llegado a la zona de laboratorios? ¿Al núcleo del YT-1?"},
+  {time:"01:30",nick:"Cherny_Anarkhiya",type:"normal",text:"Olvídalo. Volkov no se andaba con chiquitas. El acceso al Laboratorio Original no es solo una puerta cerrada; es una puta compuerta."},
+  {time:"01:31",nick:"Cherny_Anarkhiya",type:"normal",text:"No es solo el sello físico. Los sistemas de ventilación del nivel inferior fueron desviados y las consolas de datos originales... Volkov las hizo volar antes de subir al último camión."},
+  {time:"01:31",nick:"Okupa_Azathoth",type:"normal",text:"Сука tecnócrata. Sabía que si no podía controlar el oráculo, nadie más lo haría."},
+  {time:"01:31",nick:"Golos_Abyssa",type:"normal",text:"Calma. @Cherny_Anarkhiya, ¿qué hay de las terminales de monitorización secundaria?"},
+  {time:"02:34",nick:"Cherny_Anarkhiya",type:"normal",text:"Ahí está la brecha. He encontrado un terminal en la zona de mantenimiento de la planta 2 que todavía recibe picos de estática del núcleo. Esa cosa sigue ahí abajo, procesando algo."},
+  {time:"02:35",nick:"Bakunin_97",type:"normal",text:"¡Es nuestra entrada!"},
+  {time:"02:37",nick:"Cherny_Anarkhiya",type:"normal",text:"Necesito tiempo. Los guardias pasan cada dos horas. Además, el ambiente aquí abajo es... raro."},
+
+  {time:"03:37",nick:"SPUTNIK[BOT]",type:"system",text:"*** Golos_Abyssa ha abandonado el canal ***"},
+  {time:"03:37",nick:"SPUTNIK[BOT]",type:"system",text:"*** Bakunin_97 ha abandonado el canal ***"},
+  {time:"03:37",nick:"SPUTNIK[BOT]",type:"system",text:"*** Cherny_Anarkhiya ha abandonado el canal ***"},
+  {time:"03:37",nick:"SPUTNIK[BOT]",type:"system",text:"*** Radio_Voznesenka ha abandonado el canal ***"},
+  {time:"03:37",nick:"SPUTNIK[BOT]",type:"system",text:"*** Bakunin_97 ha abandonado el canal ***"},
+  {time:"03:37",nick:"SPUTNIK[BOT]",type:"system",text:"*** Okupa_Azathoth ha abandonado el canal ***"},
+  {time:"03:37",nick:"SPUTNIK[BOT]",type:"system",text:"*** Canal vacío. Conexión terminada. ***"},
+];
+
+const RECOVERED_LOG = [
+  {t:'hdr', s:'техобмен_anterior.log — SESIÓN PRIVADA: 1997-07-14 02:38'},
+  {t:'dim', s:'[23:47] *** r_zhuk ha entrado en el canal ***'},
+  {t:'dim', s:'[23:47] *** vera14 ha entrado en el canal ***'},
+  {t:'n1', nick:'Cherny_Anarkhiya', time:'02:38', s:'¿Estás ahí? Responde solo por este nodo. Si el FSB está monitorizando el servidor general, esto nos mandaría directos a una fosa en los Urales.'},
+  {t:'n2', nick:'Golos_Abyssa', time:'02:41', s:'Recibido. Estoy en el terminal seguro. ¿Qué has encontrado en el Nivel 2? Dijiste que el hormigón de Volkov era impenetrable.'},
+  {t:'n1', nick:'Cherny_Anarkhiya', time:'02:45', s:'Lo es. Físicamente, el Laboratorio de Prokorov es una tumba. Pero Volkov cometió un error de soberbia. Instaló un sistema de \"Supresión de Ruido\". Hay una serie de cables coaxiales blindados que atraviesan el sellado de hormigón.'},
+  {t:'n2', nick:'Golos_Abyssa', time:'02:48', s:'¿Para qué? ¿Para escuchar al cristal?'},
+  {t:'n1', nick:'Cherny_Anarkhiya', time:'02:52', s:'No... Parece que mandaba una señal de interferencia las 24 horas del día.'},
+  {t:'n2', nick:'Golos_Abyssa', time:'02:55', s:'El \"Gran Silencio\" de Volkov...'},
+  {t:'n1', nick:'Cherny_Anarkhiya', time:'02:59', s:'La instalacion esta pensada para transmitir solo la señal de Volkov, pero no contó con que alguien la usara de portadora.'},
+  {t:'n2', nick:'Golos_Abyssa', time:'03:03', s:'Increíble. El viejo nos dejó el cableado hecho.¿Estás \"pintando\" el caos sobre el muro de estática del viejo?'},
+  {t:'n1', nick:'Cherny_Anarkhiya', time:'03:08', s:'Exacto. Estoy modulando los manifiestos y los archivos de Prokorov en las bandas laterales de la frecuencia supresora. Es una carnicería digital. El Cristal YT-1 está recibiendo la orden de \"Cállate\" de Volkov y nuestro grito de \"Despierta\" al mismo tiempo.'},
+  {t:'n1', nick:'Cherny_Anarkhiya', time:'03:12', s:'Estoy enviando toda nuestra base de datos: registros de la purga, manifiestos, teoría del caos, el código fuente de los mercados financieros... El Cristal lo está absorbiendo todo.'},
+  {t:'n2', nick:'Golos_Abyssa', time:'03:16', s:'¿Alguna reacción del sistema?'},
+  {t:'n1', nick:'Cherny_Anarkhiya', time:'03:21', s:'El aire en el pasillo se ha vuelto frío. Muy frío. Y los monitores de la base están empezando a parpadear. Pero hay algo más... El YT-1 ha empezado a devolver paquetes de datos.'},
+  {t:'n2', nick:'Golos_Abyssa', time:'03:26', s:'¿Te está respondiendo las predicciones de acuerdo al modelo de Prokhorov?'},
+  {t:'n1', nick:'Cherny_Anarkhiya', time:'03:30', s:'No son respuestas, son... Me acaba de escupir un log de texto con palabras aleatorias.'},
+  {t:'n2', nick:'Golos_Abyssa', time:'03:34', s:'Sigue inyectando. Si el Cristal puede procesar el ruido que lo tortura y convertirlo en visión, hemos ganado.'},
+  {t:'n2', nick:'Golos_Abyssa', time:'03:37', s:'El caos está reescribiendo la arquitectura. No te detengas. Dale TODO el ruido que tengamos.'},
+  {t:'n2',  nick:'Cherny_Anarkhiya', time:'03:37', s:'Блять, ты не поверишь!'},
+  {t:'sys', s:'*** ERROR DE PARIDAD — блок восстановлен — integridad: 13% ***'},
+];
+
+// ═══════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function sp(cls,s){ return `<span class="${cls}">${esc(s)}</span>`; }
+
+// ═══════════════════════════════════════════════════════════
+//  TERMINAL STATE
+// ═══════════════════════════════════════════════════════════
+let termBooted   = false;
+let scanDone     = false;
+let recoverDone  = false;
+let decrypted    = false;
+let ircUnlocked  = false;
+let cracking     = false;
+
+const cmdHistory = [];
+let histIdx = -1;
+
+function tout(){ return document.getElementById('tout'); }
+
+function tprint(html){
+  const el = tout();
+  el.innerHTML += html + '\n';
+  el.scrollTop = el.scrollHeight;
+}
+
+function techo(raw){
+  const p = esc(document.getElementById('tprompt').textContent);
+  const el = tout();
+  el.innerHTML += `<span class="td">${p}</span> <span class="to">${esc(raw)}</span>\n`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function bootTerm(){
+  tprint(sp('td','╔═════════════════════════════════════════════════════════╗'));
+  tprint(sp('td','║') + sp('th','   MINISTERIO DE DEFENSA — REINO DE ESPAÑA              ') + sp('td','║'));
+  tprint(sp('td','║') + sp('tw','   CENTRO CRIPTOLÓGICO NACIONAL · UNIDAD TÉCNICA 7      ') + sp('td','║'));
+  tprint(sp('td','║') + sp('td','   CAMPEADOR v2.1 — Sistema de infiltración forense      ') + sp('td','║'));
+  tprint(sp('td','║') + sp('te','   CLASIFICADO: RESERVADO · USO OPERATIVO EXCLUSIVO      ') + sp('td','║'));
+  tprint(sp('td','╚═════════════════════════════════════════════════════════╝'));
+  tprint('');
+  tprint(sp('td','──────────────────────────────────────────────────────────'));
+  tprint(sp('td','  Unidad montada   : /dev/sdb1  |  FAT16  |  4 MB'));
+  tprint(sp('td','  Protocolo red    : desconectado (modo aislado — TEMPEST)'));
+  tprint(sp('td','──────────────────────────────────────────────────────────'));
+  tprint('');
+  tprint(sp('te','  AVISO: La sesión anterior del sistema terminó de forma irregular (02:33).'));
+  tprint(sp('te','         Pueden existir bloques de datos en estado inconsistente.'));
+  tprint('');
+  tprint(sp('tw','  Este terminal registra toda actividad. Proceda según protocolo.'));
+  tprint('');
+  tprint('Unidad CAMPEADOR lista. Escribe ' + sp('th','help') + ' para ver los comandos.');
+  tprint('');
+  termBooted = true;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  COMMANDS
+// ═══════════════════════════════════════════════════════════
+const HELP_TEXT = [
+  '',
+  sp('th','Comandos disponibles:'),
+  `  ${sp('to','ls')}                            — listar archivos del disco local`,
+  `  ${sp('to','scan')}                          — escanear sectores en busca de datos borrados`,
+  `  ${sp('to','recover <sector>')}              — extraer el bloque localizado (ej: recover 0xA01)`,
+  `  ${sp('to','open <nombre>')}                 — abrir un archivo`,
+  `  ${sp('to','crack <nombre>')}                — descifrar archivo .crypt protegido`,
+  `  ${sp('to','mir_irc.exe <nombre>')}          — abrir archivo IRC descifrado`,
+  `  ${sp('to','help')}                          — mostrar esta ayuda`,
+  `  ${sp('to','clear')}                         — limpiar pantalla`,
+  '',
+].join('\n');
+
+const LS_OUT = [
+  sp('td','total 5 bloques en /dev/hda1'),
+  `drwxr-xr-x  root  ${sp('to','.')}`,
+  `drwxr-xr-x  root  ${sp('to','..')}`,
+  `-rw-r--r--  root  ${sp('to','mir_irc.exe')}              [14.2 KB]`,
+  `-rw-r--r--  root  ${sp('to','sistema.cfg')}              [ 2.1 KB]`,
+  `-rw-r--r--  root  ${sp('to','техобмен.log')}             [ 8.7 KB]  ${sp('tg','[solo lectura]')}`,
+  sp('tg','-??-??-??-  ????  ?????????????????.???   [?????? ]  [SECTOR DAÑADO — usa scan]'),
+].join('\n');
+
+function getLsDynamic(){
+  let out = [
+    sp('td','total 5 bloques en /dev/hda1'),
+    `drwxr-xr-x  root  ${sp('to','.')}`,
+    `drwxr-xr-x  root  ${sp('to','..')}`,
+    `-rw-r--r--  root  ${sp('to','mir_irc.exe')}                        [14.2 KB]`,
+    `-rw-r--r--  root  ${sp('to','sistema.cfg')}                        [ 2.1 KB]`,
+    `-rw-r--r--  root  ${sp('to','техобмен.log')}                       [ 8.7 KB]  ${sp('tg','[solo lectura]')}`,
+  ];
+  if(!scanDone){
+    out.push(sp('tg','-??-??-??-  ????  ?????????????????.???   [?????? ]  [SECTOR DAÑADO — usa scan]'));
+  } else if(!recoverDone){
+    out.push(sp('tw','!SECTOR 0x7A2 DETECTADO — usa: recover 0x7A2'));
+  } else if(!decrypted){
+    out.push(`-rw-r--r--  root  ${sp('th','messagelog1997.irc.crypt')}   [ 6.3 KB]  ${sp('te','[CIFRADO RC2/40]')}`);
+  } else {
+    out.push(`-rw-r--r--  root  ${sp('th','messagelog1997.irc.crypt')}   [ 6.3 KB]  ${sp('tg','[original]')}`);
+    out.push(`-rw-r--r--  root  ${sp('th','messagelog1997.irc')}         [ 6.3 KB]  ${sp('tc','[DESCIFRADO]')}`);
+  }
+  return out.join('\n');
+}
+
+function runCmd(raw){
+  const cmd   = raw.trim().toLowerCase();
+  const parts = raw.trim().split(/\s+/);
+  if(!cmd) return;
+  techo(raw);
+
+  switch(parts[0].toLowerCase()){
+    case 'clear':
+      tout().innerHTML = '';
+      break;
+
+    case 'help':
+      tprint(HELP_TEXT);
+      break;
+
+    case 'ls':
+      tprint(getLsDynamic());
+      break;
+
+    case 'scan':
+      doScan();
+      break;
+
+    case 'recover':
+      doRecover(parts[1] || '');
+      break;
+
+    case 'open':
+      doOpen(parts[1] || '');
+      break;
+
+    case 'crack':
+      doCrack(parts[1] || '');
+      break;
+
+    case 'mir_irc.exe':
+      doMirIRC(parts[1] || '');
+      break;
+
+    default:
+      tprint(sp('te', `Comando desconocido: '${esc(parts[0])}'. Escribe help.`));
+  }
+}
+
+// ── SCAN ──
+function doScan(){
+  if(scanDone){ tprint(sp('tw','Escaneo ya realizado. Bloque localizado en sector 0x7A2.')); return; }
+  tprint(sp('tc','Iniciando escaneo de sectores del disco...'));
+  const el = tout();
+  const steps = [
+    [300,  sp('td','[░░░░░░░░░░░░░░░░░░░░]   0%  sector 0x000...')],
+    [700,  sp('td','[████░░░░░░░░░░░░░░░░]  20%  sector 0x200...')],
+    [1100, sp('td','[████████░░░░░░░░░░░░]  40%  sector 0x400...')],
+    [1500, sp('td','[████████████░░░░░░░░]  60%  sector 0x600...')],
+    [1900, sp('td','[████████████████░░░░]  80%  sector 0x7A2... ') + sp('th','¡ANOMALÍA DETECTADA!')],
+    [2400, sp('td','[████████████████████] 100%  escaneo completo.')],
+    [2650, ''],
+    [2650, sp('to','RESULTADO:')],
+    [2650, sp('to','  Bloques analizados         : 2048')],
+    [2650, sp('to','  Bloques con datos válidos   : 2041')],
+    [2650, sp('tw','  Bloques borrados con restos : 1  ← candidato')],
+    [2650, ''],
+    [2650, sp('th','  Bloque recuperable en sector 0x7A2:')],
+    [2650, sp('to','    Tamaño estimado  : 6.3 KB')],
+    [2650, ''],
+    //[2650, 'Usa ' + sp('th','recover 0x7A2') + ' para extraer el bloque.'],
+  ];
+  steps.forEach(([d,html]) => setTimeout(() => { el.innerHTML += html + '\n'; el.scrollTop = el.scrollHeight; }, d));
+  setTimeout(() => { scanDone = true; }, 2800);
+}
+
+// ── RECOVER ──
+function doRecover(sector){
+  if(!scanDone){ tprint(sp('te','ERROR: ningún bloque localizado aún. Ejecuta scan primero.')); return; }
+  if(recoverDone){ tprint(sp('tw','Bloque ya recuperado: messagelog1997.irc.crypt')); /*tprint(sp('td','Usa crack messagelog1997.irc.crypt para descifrarlo.'));*/ return; }
+
+  const s = (sector||'').toLowerCase();
+  if(s !== '0x7a2'){
+    if(!s){
+      tprint(sp('te','ERROR: debes especificar el sector. Uso: recover 0x7A2'));
+    } else {
+      tprint(sp('te',`ERROR: sector '${esc(sector)}' no encontrado o no recuperable.`));
+      tprint(sp('td','       Sector con datos: 0x7A2'));
+    }
+    return;
+  }
+
+  tprint(sp('tc','Extrayendo bloque 0x7A2 del sector dañado...'));
+  const el = tout();
+  const steps = [
+    [300,  sp('td','Copiando fragmentos al buffer temporal...')],
+    [800,  sp('td','Reconstruyendo cabecera del archivo...')],
+    [1300, sp('td','Verificando integridad (94% recuperado)...')],
+    [1800, sp('to','Extracción completada.')],
+    [2000, ''],
+    [2000, sp('to','Archivo recuperado: ') + sp('th','messagelog1997.irc.crypt')],
+    [2000, sp('te','Estado: CIFRADO RC2/40 — protegido con contraseña.')],
+    [2000, sp('td','Usa: crack messagelog1997.irc.crypt')],
+  ];
+  steps.forEach(([d,html]) => setTimeout(() => { el.innerHTML += html + '\n'; el.scrollTop = el.scrollHeight; }, d));
+  setTimeout(() => { recoverDone = true; }, 2100);
+}
+
+// ── OPEN ──
+function doOpen(fname){
+  const f = fname.toLowerCase();
+  if(f === 'техобмен.log'){
+    tprint(sp('te','ERROR: acceso denegado. Este log requiere autenticación IRC.'));
+    tprint(sp('td','       Usa mir_irc.exe con el archivo descifrado.'));
+  } else if(f === 'messagelog1997.irc.crypt'){
+    if(!recoverDone){ tprint(sp('te','ERROR: archivo no encontrado.')); return; }
+    tprint(sp('te','┌──────────────────────────────────────────────┐'));
+    tprint(sp('te','│  ARCHIVO PROTEGIDO CON CONTRASEÑA            │'));
+    tprint(sp('te','│  messagelog1997.irc.crypt                │'));
+    tprint(sp('te','│  Cifrado: RC2/40                             │'));
+    tprint(sp('te','│  Acceso denegado — se requiere clave         │'));
+    tprint(sp('te','└──────────────────────────────────────────────┘'));
+    tprint(sp('td','Usa: crack messagelog1997.irc.crypt'));
+  } else if(f === 'messagelog1997.irc'){
+    if(!decrypted){ tprint(sp('te','ERROR: archivo no encontrado.')); return; }
+    tprint(sp('tw','ADVERTENCIA: usa mir_irc.exe para abrir archivos .irc'));
+    tprint(sp('td','  Uso: mir_irc.exe messagelog1997.irc'));
+  } else if(f === 'mir_irc.exe'){
+    tprint(sp('tw','mir_irc.exe — МИР-IRC viewer v1.0'));
+    tprint(sp('td','Uso: mir_irc.exe <archivo.irc>'));
+  } else {
+    tprint(sp('te', `ERROR: '${esc(fname)}' — archivo no encontrado.`));
+  }
+}
+
+// ── CRACK ──
+function doCrack(fname){
+  if(!recoverDone){ tprint(sp('te','ERROR: primero extrae el archivo con recover 0x7A2.')); return; }
+
+  const f = (fname||'').toLowerCase();
+  if(f !== 'messagelog1997.irc.crypt'){
+    if(!f){
+      tprint(sp('te','ERROR: debes especificar el archivo. Uso: crack messagelog1997.irc.crypt'));
+    } else {
+      tprint(sp('te',`ERROR: '${esc(fname)}' — archivo no encontrado o no cifrado.`));
+    }
+    return;
+  }
+
+  if(decrypted){    tprint(sp('to','Archivo ya descifrado: messagelog1997.irc')); tprint(sp('td','Usa: mir_irc.exe messagelog1997.irc')); return; }
+  if(cracking){     tprint(sp('tw','Ataque en curso... espera.')); return; }
+
+  cracking = true;
+  tprint(sp('tc','Iniciando ataque de fuerza bruta RC2/40 sobre messagelog1997.irc.crypt...'));
+  tprint(sp('td','Cargando diccionario: sovos_wordlist_91.txt  [12.847 entradas]'));
+  tprint('');
+
+  const el = tout();
+
+  const candidates = [
+    'moskva','sputnik','pravda','rodina','krasniy','elbrus','vostok',
+    'nauka','partiya','stalker','zorya','krypton','tovarishch',
+    'signal','zakat','volna','kristal','tuman','nebo','zemля',
+    'zvuk','echo','rezonans','tonik','puls',
+  ];
+
+  let i = 0;
+
+  function tryNext(){
+    if(i >= candidates.length){ done(); return; }
+    const word = candidates[i];
+    const isFinal = (word === 'zvuk');
+    const delay = i < 14 ? 120 : i < 19 ? 280 : 480;
+
+    el.innerHTML += `<span class="td">  [${String(i*10000+1).padStart(8,'0')}]/25987298</span> probando: <span class="to">${esc(word)}</span>${isFinal ? '' : ' <span class="te">✗</span>'}\n`;
+    el.scrollTop = el.scrollHeight;
+    i++;
+
+    if(isFinal){
+      setTimeout(done, 500);
+    } else {
+      setTimeout(tryNext, delay);
+    }
+  }
+
+  setTimeout(tryNext, 600);
+
+  function done(){
+    el.innerHTML += '\n';
+    el.innerHTML += sp('th','✓  COINCIDENCIA ENCONTRADA') + '\n';
+    el.innerHTML += sp('to','   Clave: ') + sp('th','zvuk') + sp('td','  (entrada #22 del diccionario)') + '\n';
+    el.innerHTML += '\n';
+    setTimeout(() => {
+      tprint(sp('td','Descifrando bloques con clave encontrada...'));
+      const steps = [
+        [300,  sp('td','[███░░░░░░░] Bloque 1/3...')],
+        [700,  sp('td','[██████░░░░] Bloque 2/3...')],
+        [1100, sp('td','[██████████] Bloque 3/3...')],
+        [1400, ''],
+        [1400, sp('to','Descifrado completado.')],
+        [1400, sp('th','Archivo creado: messagelog1997.irc')],
+        [1400, ''],
+        //[1400, 'Usa ' + sp('th','mir_irc.exe messagelog1997.irc') + ' para abrirlo.'],
+      ];
+      steps.forEach(([d,html]) => setTimeout(() => { el.innerHTML += html+'\n'; el.scrollTop = el.scrollHeight; }, d));
+      setTimeout(() => {
+        decrypted = true;
+        cracking  = false;
+      }, 1600);
+    }, 400);
+  }
+}
+
+// ── MIR_IRC.EXE ──
+function doMirIRC(fname){
+  const f = (fname||'').toLowerCase();
+  if(!f){
+    tprint(sp('tc','Iniciando МИР-IRC viewer v1.0...'));
+    tprint(sp('td','Sin archivo — abriendo en modo desconectado.'));
+    setTimeout(() => openEmptyIRC(), 600);
+    return;
+  }
+  if(f === 'messagelog1997.irc.crypt'){
+    tprint(sp('te','ERROR: el archivo está cifrado.'));
+    return;
+  }
+  if(f !== 'messagelog1997.irc'){
+    tprint(sp('te',`ERROR: '${esc(fname)}' — archivo no encontrado.`));
+    return;
+  }
+  if(!decrypted){
+    tprint(sp('te','ERROR: messagelog1997.irc no encontrado. ¿Has descifrado el .crypt?'));
+    return;
+  }
+  tprint(sp('tc','Iniciando МИР-IRC viewer...'));
+  tprint(sp('td','Cargando messagelog1997.irc...'));
+  setTimeout(() => {
+    tprint(sp('to','Sesión cargada. Abriendo visor IRC.'));
+    unlockIRC();
+    setTimeout(() => openFile(), 300);
+  }, 900);
+}
+
+
+function openFile(){
+  const body = document.getElementById('fwrap');
+  body.innerHTML = '';
+  RECOVERED_LOG.forEach(e => {
+    let html = '';
+    if(e.t === 'hdr'){
+      html = `<span class="fhdr">[ ${esc(e.s)} ]</span>`;
+    } else if(e.t === 'sys'){
+      html = `<div class="fsys">${esc(e.s)}</div>`;
+    } else if(e.t === 'dim'){
+      html = `<div class="fdim">${esc(e.s)}</div>`;
+    } else {
+      const nc = e.t === 'n1' ? 'fn1' : 'fn2';
+      html = `<div><span class="fdim">[${esc(e.time)}]</span> <span class="${nc}">&lt;${esc(e.nick)}&gt;</span> ${esc(e.s)}</div>`;
+    }
+    body.innerHTML += html;
+  });
+  bringToFront('file-win');
+  tprint(sp('to','Archivo abierto en el visor.'));
+}
+
+// ── UNLOCK IRC (with content) ──
+function unlockIRC(){
+  ircUnlocked = true;
+  const tb = document.getElementById('tb-irc');
+  tb.style.opacity = '1';
+  tb.style.cursor = 'pointer';
+  tb.onclick = () => bringToFront('irc-win');
+  const ic = document.getElementById('icon-irc');
+  ic.querySelector('.iimg').style.cssText = '';
+  ic.querySelector('.ilabel').style.cssText = '';
+  ic.ondblclick = () => bringToFront('irc-win');
+  renderIRC();
+  setTimeout(() => bringToFront('irc-win'), 600);
+}
+
+// ── OPEN EMPTY IRC (no log loaded) ──
+function openEmptyIRC(){
+  // show the IRC window but with no messages loaded
+  document.getElementById('irclog').innerHTML =
+    `<div class="ml system"><span class="mt">[--:--]</span><span class="mn nc0">[МИР-IRC]</span><span class="mx" style="color:var(--dim);font-style:italic"> Sin archivo cargado. Modo solo visualización. Usa mir_irc.exe &lt;archivo.irc&gt; para cargar una sesión.</span></div>`;
+  document.getElementById('ulist').innerHTML = '';
+  bringToFront('irc-win');
+}
+
+function tryIRC(){
+  if(!ircUnlocked){
+    // flash the icon briefly with an error indication — no popup
+    const ic = document.getElementById('icon-irc');
+    ic.querySelector('.ilabel').textContent = 'ACCESO DENEGADO';
+    setTimeout(() => { ic.querySelector('.ilabel').textContent = 'МИР-IRC 1.0'; }, 1500);
+  } else {
+    bringToFront('irc-win');
+  }
+}
+
+function tryTerm(){
+  bringToFront('term-win');
+  if(!termBooted){
+    bootTerm();
+  }
+  setTimeout(() => { document.getElementById('tinput').focus(); }, 80);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  KEY HANDLER
+// ═══════════════════════════════════════════════════════════
+function handleKey(e){
+  const inp = document.getElementById('tinput');
+  if(e.key === 'Enter'){
+    const val = inp.value;
+    if(val.trim()){ cmdHistory.unshift(val); histIdx = -1; }
+    inp.value = '';
+    runCmd(val);
+  } else if(e.key === 'ArrowUp'){
+    e.preventDefault();
+    if(histIdx < cmdHistory.length - 1){ histIdx++; inp.value = cmdHistory[histIdx]; }
+  } else if(e.key === 'ArrowDown'){
+    e.preventDefault();
+    if(histIdx > 0){ histIdx--; inp.value = cmdHistory[histIdx]; }
+    else { histIdx = -1; inp.value = ''; }
+  }
+}
+
+// keep focus on input when clicking anywhere in the terminal window
+document.getElementById('term-win').addEventListener('click', () => {
+  document.getElementById('tinput').focus();
+});
+
+// ═══════════════════════════════════════════════════════════
+//  IRC RENDER
+// ═══════════════════════════════════════════════════════════
+const ncache = {};
+let ncnt = 0;
+function nickColor(nick){
+  if(ncache[nick] === undefined) ncache[nick] = ncnt++ % 8;
+  return ncache[nick];
+}
+
+function renderIRC(){
+  document.getElementById('ulist').innerHTML =
+    IRC_USERS.map(u => `<div class="ui ${u.op?'op':''}">${u.nick}</div>`).join('');
+
+  const box = document.getElementById('irclog');
+  box.innerHTML = IRC_MSGS.map(m => {
+    const c = nickColor(m.nick);
+    const nick = (m.type==='system'||m.type==='notice')
+      ? `<span class="mn nc${c}">[${m.nick}]</span>`
+      : `<span class="mn nc${c}">&lt;${m.nick}&gt;</span>`;
+    return `<div class="ml ${m.type}">
+      <span class="mt">[${m.time}]</span>${nick}
+      <span class="mx">${esc(m.text)}</span></div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WINDOW MANAGEMENT
+// ═══════════════════════════════════════════════════════════
+let zTop = 10;
+
+function bringToFront(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.style.display = 'flex';
+  el.style.zIndex  = ++zTop;
+}
+
+function closeWin(id){
+  document.getElementById(id).style.display = 'none';
+}
+
+// Drag
+let drag = null;
+function startDrag(e, id){
+  e.preventDefault();
+  const el = document.getElementById(id);
+  bringToFront(id);
+  const r = el.getBoundingClientRect();
+  drag = { id, ox: e.clientX - r.left, oy: e.clientY - r.top };
+}
+document.addEventListener('mousemove', e => {
+  if(!drag) return;
+  const el   = document.getElementById(drag.id);
+  const desk = document.getElementById('desktop').getBoundingClientRect();
+  el.style.left = Math.max(0, Math.min(e.clientX - desk.left - drag.ox, desk.width  - el.offsetWidth))  + 'px';
+  el.style.top  = Math.max(0, Math.min(e.clientY - desk.top  - drag.oy, desk.height - el.offsetHeight)) + 'px';
+});
+document.addEventListener('mouseup', () => { drag = null; });
+
+// Resize
+let rsz = null;
+function startResize(e, id){
+  e.preventDefault(); e.stopPropagation();
+  const el = document.getElementById(id);
+  bringToFront(id);
+  rsz = { id, sx: e.clientX, sy: e.clientY, sw: el.offsetWidth, sh: el.offsetHeight };
+}
+document.addEventListener('mousemove', e => {
+  if(!rsz) return;
+  const el = document.getElementById(rsz.id);
+  el.style.width  = Math.max(300, rsz.sw + e.clientX - rsz.sx) + 'px';
+  el.style.height = Math.max(180, rsz.sh + e.clientY - rsz.sy) + 'px';
+});
+document.addEventListener('mouseup', () => { rsz = null; });
+
+// Clock
+function tick(){
+  const n = new Date();
+  document.getElementById('clock').textContent =
+    String(n.getHours()).padStart(2,'0') + ':' +
+    String(n.getMinutes()).padStart(2,'0') + ':' +
+    String(n.getSeconds()).padStart(2,'0');
+}
+setInterval(tick, 1000); tick();
+
+// Init — only sysinfo and about open by default
+bringToFront('sys-win');
+bringToFront('abt-win');
+</script>
+</body>
+</html>

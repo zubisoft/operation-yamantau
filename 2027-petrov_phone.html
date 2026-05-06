@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>УСТРОЙСТВО #YT1-Φ — ЗАСЕКРЕЧЕНО</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+SC:wght@300;400;700&family=Oswald:wght@200;400;600&display=swap');
+
+  :root {
+    --red: #c0392b;
+    --red-dim: #7b241c;
+    --amber: #e67e22;
+    --amber-dim: #935116;
+    --green: #27ae60;
+    --green-dim: #1a6b3c;
+    --screen-bg: #0a0a0f;
+    --glass: rgba(255,255,255,0.03);
+    --text: #d0d0c8;
+    --text-dim: #6a6a60;
+    --phone-body: #1a1a1f;
+    --phone-edge: #2a2a2f;
+    --tg-blue: #2b84c8;
+    --tg-dark: #17212b;
+    --tg-msg: #182533;
+    --tg-sent: #2b5278;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: #080808;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* CRT scanlines over entire page */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.15) 2px,
+      rgba(0,0,0,0.15) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Vignette */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.85) 100%);
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* Background texture */
+  .bg-texture {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(192,57,43,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(39,174,96,0.03) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23080808'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23111'/%3E%3C/svg%3E");
+    z-index: 0;
+  }
+
+  /* Lab context label */
+  .lab-label {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--red-dim);
+    font-size: 10px;
+    letter-spacing: 4px;
+    opacity: 0.6;
+    z-index: 100;
+    text-align: center;
+  }
+  .lab-label span { color: var(--amber-dim); }
+
+  /* Phone wrapper */
+  .scene {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .phone {
+    width: 320px;
+    height: 680px;
+    background: linear-gradient(160deg, #222228 0%, #141418 60%, #0e0e12 100%);
+    border-radius: 44px;
+    border: 1.5px solid #3a3a42;
+    box-shadow:
+      0 0 0 1px #111,
+      0 0 60px rgba(0,0,0,0.9),
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      inset 0 -1px 0 rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Physical damage marks */
+  .scratch {
+    position: absolute;
+    background: rgba(255,255,255,0.04);
+    border-radius: 1px;
+    z-index: 200;
+    pointer-events: none;
+  }
+  .scratch-1 { width: 1px; height: 40px; top: 80px; right: 25px; transform: rotate(15deg); }
+  .scratch-2 { width: 60px; height: 1px; top: 200px; left: 10px; transform: rotate(-5deg); }
+  .scratch-3 { width: 1px; height: 20px; bottom: 120px; left: 30px; transform: rotate(30deg); }
+
+  /* Power/volume buttons */
+  .btn-side {
+    position: absolute;
+    background: linear-gradient(to bottom, #2a2a30, #1a1a1f);
+    border-radius: 2px;
+    z-index: 10;
+  }
+  .btn-power { right: -2px; top: 160px; width: 3px; height: 60px; }
+  .btn-vol-up { left: -2px; top: 130px; width: 3px; height: 40px; }
+  .btn-vol-down { left: -2px; top: 180px; width: 3px; height: 40px; }
+
+  /* Camera module */
+  .camera-module {
+    position: absolute;
+    top: 18px;
+    left: 24px;
+    width: 70px;
+    height: 70px;
+    background: #0c0c10;
+    border-radius: 18px;
+    border: 1px solid #2a2a30;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 8px;
+  }
+  .cam-lens {
+    background: radial-gradient(circle, #1a2a3a 0%, #080c10 60%, #000 100%);
+    border-radius: 50%;
+    border: 1px solid #1a1a22;
+    position: relative;
+  }
+  .cam-lens::after {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 30%;
+    height: 30%;
+    background: rgba(100,180,255,0.15);
+    border-radius: 50%;
+  }
+
+  /* Manufacturer label */
+  .mfr-label {
+    position: absolute;
+    top: 26px;
+    right: 22px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 9px;
+    color: rgba(255,255,255,0.1);
+    letter-spacing: 1px;
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* Screen */
+  .screen {
+    width: 290px;
+    height: 600px;
+    background: var(--screen-bg);
+    border-radius: 36px;
+    margin-top: 40px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #222228;
+  }
+
+  /* Notch */
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 28px;
+    background: #050508;
+    border-radius: 0 0 18px 18px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .notch-cam {
+    width: 8px;
+    height: 8px;
+    background: #111;
+    border-radius: 50%;
+    border: 1px solid #1a1a22;
+  }
+  .notch-speaker {
+    width: 30px;
+    height: 3px;
+    background: #0a0a0f;
+    border-radius: 2px;
+    border: 1px solid #1a1a1f;
+  }
+
+  /* Fingerprint overlay */
+  #fingerprint-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--screen-bg);
+  }
+
+  .fp-time {
+    position: absolute;
+    top: 50px;
+    text-align: center;
+    color: var(--text);
+  }
+  .fp-hour {
+    font-family: 'Oswald', sans-serif;
+    font-size: 64px;
+    font-weight: 200;
+    letter-spacing: -2px;
+    color: #e8e8e0;
+  }
+  .fp-date {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  .fp-sensor-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 40px;
+  }
+  .fp-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    background: rgba(255,255,255,0.02);
+  }
+  .fp-icon::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .fp-icon:hover {
+    border-color: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.05);
+    box-shadow: 0 0 20px rgba(39,174,96,0.1);
+  }
+  .fp-icon svg { width: 36px; height: 36px; opacity: 0.5; }
+
+  .fp-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+  .fp-sublabel {
+    font-size: 9px;
+    color: rgba(255,255,255,0.12);
+    letter-spacing: 1px;
+    margin-top: -10px;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+
+  /* Scanning animation */
+  .fp-scanning {
+    animation: fp-pulse 0.6s ease-in-out;
+  }
+  @keyframes fp-pulse {
+    0% { border-color: rgba(39,174,96,0.3); box-shadow: 0 0 0 rgba(39,174,96,0); }
+    50% { border-color: rgba(39,174,96,0.8); box-shadow: 0 0 30px rgba(39,174,96,0.3); background: rgba(39,174,96,0.1); }
+    100% { border-color: rgba(39,174,96,0.3); box-shadow: 0 0 0 rgba(39,174,96,0); }
+  }
+
+  /* Home screen */
+  #home-screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    background: linear-gradient(160deg, #0f1420 0%, #080c14 50%, #060810 100%);
+  }
+
+  .status-bar {
+    height: 36px;
+    padding: 8px 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    position: relative;
+    z-index: 20;
+  }
+  .status-time { font-family: 'Oswald', sans-serif; font-weight: 400; }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .signal-bar { display: flex; gap: 1px; align-items: flex-end; }
+  .signal-bar span {
+    width: 3px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 1px;
+  }
+  .signal-bar span:nth-child(1) { height: 4px; }
+  .signal-bar span:nth-child(2) { height: 6px; }
+  .signal-bar span:nth-child(3) { height: 8px; opacity: 0.3; }
+  .signal-bar span:nth-child(4) { height: 10px; opacity: 0.3; }
+
+  .wallpaper-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(192,57,43,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(39,130,200,0.06) 0%, transparent 50%),
+      linear-gradient(160deg, #0c1018 0%, #06080e 100%);
+  }
+
+  /* Soviet red star watermark */
+  .wallpaper-bg::after {
+    content: '★';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%) rotate(-5deg);
+    font-size: 200px;
+    color: rgba(192,57,43,0.04);
+    pointer-events: none;
+  }
+
+  .app-grid {
+    flex: 1;
+    padding: 40px 16px 16px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px 8px;
+    align-content: start;
+    position: relative;
+    z-index: 10;
+  }
+
+  .app-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .app-icon:active { transform: scale(0.9); }
+
+  .app-icon-img {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  .app-label {
+    font-size: 9px;
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    line-height: 1.3;
+  }
+
+  /* App badge */
+  .badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--red);
+    color: white;
+    font-size: 9px;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Share Tech Mono', monospace;
+    padding: 0 3px;
+    border: 1.5px solid #0f1420;
+    z-index: 5;
+  }
+
+  /* App colors */
+  .app-wechat { background: linear-gradient(135deg, #07c160, #06a352); }
+  .app-telegram { background: linear-gradient(135deg, #2aabee, #229ed9); }
+  .app-phone { background: linear-gradient(135deg, #4cd964, #34c759); }
+  .app-camera { background: linear-gradient(135deg, #1c1c1e, #2c2c2e); }
+  .app-maps { background: linear-gradient(135deg, #3ac) }
+  .app-settings { background: linear-gradient(135deg, #3a3a3c, #2c2c2e); }
+  .app-notes { background: linear-gradient(135deg, #ffd60a, #ffcc00); }
+  .app-mail { background: linear-gradient(135deg, #0a84ff, #007aff); }
+  .app-calc { background: linear-gradient(135deg, #1c1c1e, #ff9500); }
+  .app-vpn { background: linear-gradient(135deg, #5e5ce6, #4340c4); }
+  .app-files { background: linear-gradient(135deg, #0a84ff, #64d2ff); }
+  .app-alarm { background: linear-gradient(135deg, #ff3b30, #c0392b); }
+
+  .dock {
+    height: 80px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: rgba(255,255,255,0.04);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 20;
+  }
+
+  /* Telegram App */
+  #telegram-screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    background: var(--tg-dark);
+    z-index: 200;
+  }
+
+  .tg-header {
+    height: 60px;
+    background: #17212b;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 12px;
+    padding-top: 10px;
+  }
+  .tg-back {
+    color: var(--tg-blue);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    transition: background 0.2s;
+  }
+  .tg-back:hover { background: rgba(255,255,255,0.05); }
+
+  .tg-chat-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .tg-chat-list::-webkit-scrollbar { width: 2px; }
+  .tg-chat-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
+  .tg-search {
+    margin: 8px 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 8px 12px;
+    color: rgba(255,255,255,0.3);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tg-chat-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .tg-chat-item:hover { background: rgba(255,255,255,0.04); }
+  .tg-chat-item.unread { }
+
+  .tg-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+  }
+
+  .tg-chat-info { flex: 1; min-width: 0; }
+  .tg-chat-name {
+    font-size: 13px;
+    color: #e8e8e0;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 400;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .tg-chat-preview {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .tg-chat-time {
+    font-size: 10px;
+    color: rgba(255,255,255,0.25);
+  }
+  .tg-unread-badge {
+    background: var(--red);
+    color: white;
+    font-size: 9px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    margin-left: 4px;
+  }
+  .tg-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.04);
+    margin: 0 14px;
+  }
+
+  /* Chat view */
+  #chat-screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    background: #0e1621;
+    z-index: 300;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect width='60' height='60' fill='%230e1621'/%3E%3Ccircle cx='30' cy='30' r='0.5' fill='%23ffffff' opacity='0.03'/%3E%3C/svg%3E");
+  }
+
+  .chat-header {
+    height: 64px;
+    background: #17212b;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    padding: 10px 10px 0;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .chat-back {
+    color: var(--tg-blue);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 6px;
+  }
+
+  .chat-contact {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .chat-contact-name {
+    font-size: 13px;
+    color: #e8e8e0;
+    font-family: 'Noto Sans SC', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chat-contact-status {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .encrypted-badge {
+    background: rgba(192,57,43,0.2);
+    border: 1px solid rgba(192,57,43,0.4);
+    color: var(--red);
+    font-size: 8px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .chat-messages::-webkit-scrollbar { width: 2px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
+  .msg-date-label {
+    text-align: center;
+    font-size: 10px;
+    color: rgba(255,255,255,0.25);
+    padding: 8px 0;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+  }
+  .msg-date-label span {
+    background: rgba(255,255,255,0.06);
+    padding: 3px 10px;
+    border-radius: 10px;
+  }
+
+  .msg-bubble {
+    max-width: 85%;
+    padding: 8px 11px;
+    border-radius: 14px;
+    font-size: 11px;
+    line-height: 1.55;
+    position: relative;
+    margin-bottom: 2px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .msg-received {
+    background: var(--tg-msg);
+    color: rgba(255,255,255,0.85);
+    align-self: flex-start;
+    border-radius: 4px 14px 14px 14px;
+  }
+  .msg-time-stamp {
+    font-size: 9px;
+    color: rgba(255,255,255,0.25);
+    text-align: right;
+    margin-top: 3px;
+  }
+
+  /* Warning message style */
+  .msg-warning {
+    background: rgba(192,57,43,0.12);
+    border: 1px solid rgba(192,57,43,0.2);
+    color: rgba(255,200,190,0.9);
+  }
+
+  /* System notice */
+  .sys-notice {
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+    margin: 4px 20px;
+    font-family: 'Share Tech Mono', monospace;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .chat-input-bar {
+    height: 56px;
+    background: #17212b;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    background: rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    font-family: 'Share Tech Mono', monospace;
+    cursor: not-allowed;
+  }
+  .chat-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--tg-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.5;
+  }
+
+  /* Home indicator */
+  .home-indicator {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    z-index: 500;
+  }
+
+  /* Transitions */
+  .fade-in {
+    animation: fadeIn 0.5s ease forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(1.01); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .slide-up {
+    animation: slideUp 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .slide-left {
+    animation: slideLeft 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+  @keyframes slideLeft {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* Unlock flash */
+  .unlock-flash {
+    position: absolute;
+    inset: 0;
+    background: rgba(39,174,96,0.15);
+    z-index: 150;
+    animation: flash 0.4s ease forwards;
+    pointer-events: none;
+  }
+  @keyframes flash {
+    0% { opacity: 0; }
+    30% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* Classified watermark on messages */
+  .classified-notice {
+    text-align: center;
+    padding: 12px;
+    font-size: 9px;
+    color: rgba(192,57,43,0.4);
+    letter-spacing: 2px;
+    font-family: 'Share Tech Mono', monospace;
+    border-bottom: 1px solid rgba(192,57,43,0.1);
+  }
+
+  /* Fingerprint svg lines animation */
+  @keyframes fp-scan-line {
+    0% { stroke-dashoffset: 100; opacity: 0.2; }
+    50% { opacity: 0.8; }
+    100% { stroke-dashoffset: -100; opacity: 0.2; }
+  }
+  .fp-lines { animation: fp-scan-line 3s ease-in-out infinite; }
+
+  /* Bottom home bar glow */
+  .tg-logo-svg { fill: white; }
+
+  /* Encryptd indicator */
+  .enc-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  /* Lock icon */
+  #lock-icon { font-size: 18px; margin-bottom: 16px; opacity: 0.2; }
+
+  .tg-header-info { display: flex; flex-direction: column; flex: 1; }
+  .tg-header-title {
+    font-size: 14px;
+    color: #e0e0d8;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  .tg-header-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .tg-search-icon { opacity: 0.3; font-size: 14px; }
+
+  /* Typing indicator */
+  .typing-indicator {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--tg-msg);
+    border-radius: 4px 14px 14px 14px;
+    align-self: flex-start;
+    width: 50px;
+    display: none;
+  }
+  .typing-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    animation: typing 1.2s ease-in-out infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  /* App store-style icon for WeChat */
+  .wechat-inner { font-size: 28px; }
+
+  /* Glitch on lock screen number */
+  @keyframes glitch {
+    0% { clip-path: inset(20% 0 60% 0); transform: skew(5deg); }
+    10% { clip-path: inset(60% 0 20% 0); transform: skew(-3deg); }
+    20% { clip-path: none; transform: skew(0); }
+    100% { clip-path: none; transform: skew(0); }
+  }
+  .glitch-text {
+    position: relative;
+  }
+  .glitch-text::before {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--red);
+    opacity: 0;
+    animation: glitch 8s ease-in-out infinite 3s;
+  }
+
+  /* App camera inner */
+  .cam-inner { position: relative; }
+  .cam-inner::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.5);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+</style>
+</head>
+<body>
+
+<div class="bg-texture"></div>
+
+<div class="lab-label">
+  ARTEFACTO RECUPERADO — BASE SUBTERRÁNEA SOVIÉTICA Ω-7 &nbsp;|&nbsp; CLASIFICACIÓN: <span>ULTRASECRETO</span>
+</div>
+
+<div class="scene">
+  <div class="phone">
+
+    <!-- Physical buttons -->
+    <div class="btn-side btn-power"></div>
+    <div class="btn-side btn-vol-up"></div>
+    <div class="btn-side btn-vol-down"></div>
+
+    <!-- Physical scratches -->
+    <div class="scratch scratch-1"></div>
+    <div class="scratch scratch-2"></div>
+    <div class="scratch scratch-3"></div>
+
+    <!-- Camera module -->
+    <div class="camera-module">
+      <div class="cam-lens"></div>
+      <div class="cam-lens"></div>
+      <div class="cam-lens"></div>
+      <div class="cam-lens" style="background: radial-gradient(circle, #1a1a2a 0%, #050508 100%); display:flex; align-items:center; justify-content:center; font-size:8px; color:rgba(255,255,255,0.15);">⊕</div>
+    </div>
+
+    <!-- Manufacturer label -->
+    <div class="mfr-label">
+      华为<br>
+      <span style="font-size:8px; letter-spacing:0.5px; opacity:0.7">HUAWEI</span>
+    </div>
+
+    <!-- Screen -->
+    <div class="screen">
+
+      <div class="notch">
+        <div class="notch-cam"></div>
+        <div class="notch-speaker"></div>
+      </div>
+
+      <!-- FINGERPRINT LOCK SCREEN -->
+      <div id="fingerprint-overlay">
+        <div class="fp-time">
+          <div class="fp-hour glitch-text" data-text="03:27">03:27</div>
+          <div class="fp-date">СР, 01 АПРЕЛЯ 2023</div>
+        </div>
+
+        <div id="lock-icon">🔒</div>
+
+        <div class="fp-sensor-area">
+          <div class="fp-icon" id="fp-btn" onclick="unlockPhone()" title="Toca para desbloquear">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path class="fp-lines" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linecap="round"
+                stroke-dasharray="8 4"
+                d="M50 18 C30 18 15 33 15 50 C15 67 30 82 50 82 C70 82 85 67 85 50 C85 33 70 18 50 18Z"/>
+              <path stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"
+                d="M38 28 C38 28 25 38 25 55 C25 68 36 78 50 78"/>
+              <path stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"
+                d="M62 28 C62 28 75 38 75 55 C75 65 68 74 58 77"/>
+              <path stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"
+                d="M38 42 C38 42 33 48 35 57 C37 64 43 69 50 69 C57 69 63 64 65 57 C67 50 64 43 58 40"/>
+              <path stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"
+                d="M44 52 C44 52 44 60 50 60 C56 60 57 54 56 50"/>
+              <line stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"
+                x1="50" y1="18" x2="50" y2="24"/>
+            </svg>
+          </div>
+          <div class="fp-label">HUELLA DACTILAR</div>
+          <div class="fp-sublabel">指纹解锁</div>
+        </div>
+      </div>
+
+      <!-- HOME SCREEN -->
+      <div id="home-screen">
+        <div class="wallpaper-bg"></div>
+
+        <div class="status-bar">
+          <div class="status-time">03:27</div>
+          <div class="status-icons">
+            <div class="signal-bar">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <span style="font-size:10px">🔋</span>
+          </div>
+        </div>
+
+        <div class="app-grid">
+          <!-- Row 1 -->
+          <div class="app-icon" onclick="openApp('wechat')">
+            <div class="app-icon-img app-wechat">💬</div>
+            <div class="app-label">微信<br>WeChat</div>
+          </div>
+          <div class="app-icon" onclick="openTelegram()">
+            <div class="app-icon-img app-telegram" style="position:relative">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+              <div class="badge">7</div>
+            </div>
+            <div class="app-label">Telegram</div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-phone">📞</div>
+            <div class="app-label">电话<br>Llamadas</div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-camera" style="font-size:22px">📷</div>
+            <div class="app-label">相机<br>Cámara</div>
+          </div>
+          <!-- Row 2 -->
+          <div class="app-icon">
+            <div class="app-icon-img app-mail">✉️</div>
+            <div class="app-label">邮件<br>Correo</div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-maps">🗺️</div>
+            <div class="app-label">地图<br>Mapas</div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-notes" style="color:#333">📝</div>
+            <div class="app-label">笔记<br>Notas</div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-vpn">🛡️</div>
+            <div class="app-label">VPN<br>安全</div>
+          </div>
+          <!-- Row 3 -->
+          <div class="app-icon">
+            <div class="app-icon-img app-calc">🧮</div>
+            <div class="app-label">计算器<br>Calc.</div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-files">📁</div>
+            <div class="app-label">文件<br>Archivos</div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-alarm">⏰</div>
+            <div class="app-label">闹钟<br>Alarma</div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-settings">⚙️</div>
+            <div class="app-label">设置<br>Ajustes</div>
+          </div>
+        </div>
+
+        <!-- Dock -->
+        <div class="dock">
+          <div class="app-icon" onclick="openTelegram()">
+            <div class="app-icon-img app-telegram" style="width:48px;height:48px;position:relative">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+              <div class="badge">7</div>
+            </div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-phone" style="width:48px;height:48px">📞</div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-mail" style="width:48px;height:48px">✉️</div>
+          </div>
+          <div class="app-icon">
+            <div class="app-icon-img app-wechat" style="width:48px;height:48px">💬</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TELEGRAM SCREEN -->
+      <div id="telegram-screen">
+        <div class="tg-header">
+          <div class="tg-back" onclick="closeTelegram()">‹</div>
+          <div class="tg-header-info">
+            <div class="tg-header-title">Telegram</div>
+          </div>
+          <div style="color:rgba(255,255,255,0.3); font-size:18px">✎</div>
+        </div>
+
+        <div class="tg-chat-list" id="tg-chat-list">
+          <div class="tg-search">
+            <span class="tg-search-icon">🔍</span>
+            <span>Поиск...</span>
+          </div>
+
+          <!-- Critical chat on top -->
+          <div class="tg-chat-item" onclick="openChat()">
+            <div class="tg-avatar" style="background: linear-gradient(135deg, #7b241c, #c0392b); font-size:20px;">🔴</div>
+            <div class="tg-chat-info">
+              <div class="tg-chat-name">
+                <span>📱 [NÚMERO OCULTO]</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span class="tg-chat-time">03:27</span>
+                  <div class="tg-unread-badge">7</div>
+                </div>
+              </div>
+              <div class="tg-chat-preview">Baje al foso. Ahora.</div>
+            </div>
+          </div>
+          <div class="tg-divider"></div>
+
+          <div class="tg-chat-item">
+            <div class="tg-avatar" style="background:linear-gradient(135deg,#2980b9,#1a5276)">АК</div>
+            <div class="tg-chat-info">
+              <div class="tg-chat-name"><span>Андрей К.</span><span class="tg-chat-time">вчера</span></div>
+              <div class="tg-chat-preview">отчёт готов, отправляю утром</div>
+            </div>
+          </div>
+          <div class="tg-divider"></div>
+
+          <div class="tg-chat-item">
+            <div class="tg-avatar" style="background:linear-gradient(135deg,#117a65,#0e6655)">СО</div>
+            <div class="tg-chat-info">
+              <div class="tg-chat-name"><span>Сектор Омега</span><span class="tg-chat-time">вчера</span></div>
+              <div class="tg-chat-preview">🔒 Операция подтверждена</div>
+            </div>
+          </div>
+          <div class="tg-divider"></div>
+
+          <div class="tg-chat-item">
+            <div class="tg-avatar" style="background:linear-gradient(135deg,#4a235a,#6c3483)">НС</div>
+            <div class="tg-chat-info">
+              <div class="tg-chat-name"><span>Наталья С.</span><span class="tg-chat-time">23 мар</span></div>
+              <div class="tg-chat-preview">Петров, звони когда сможешь</div>
+            </div>
+          </div>
+          <div class="tg-divider"></div>
+
+          <div class="tg-chat-item">
+            <div class="tg-avatar" style="background:linear-gradient(135deg,#784212,#935116)">БЗ</div>
+            <div class="tg-chat-info">
+              <div class="tg-chat-name"><span>База Зета</span><span class="tg-chat-time">20 мар</span></div>
+              <div class="tg-chat-preview">координаты подтверждены</div>
+            </div>
+          </div>
+          <div class="tg-divider"></div>
+        </div>
+      </div>
+
+      <!-- CHAT SCREEN -->
+      <div id="chat-screen">
+        <div class="chat-header">
+          <div class="chat-back" onclick="closeChat()">‹</div>
+          <div class="tg-avatar" style="background:linear-gradient(135deg,#7b241c,#c0392b);font-size:16px;width:38px;height:38px;flex-shrink:0">🔴</div>
+          <div class="chat-contact">
+            <div class="chat-contact-name">
+              📱 [NÚMERO OCULTO]
+              <span class="encrypted-badge">E2E</span>
+              <div class="enc-dot"></div>
+            </div>
+            <div class="chat-contact-status">Estado: Sincronización de fase crítica</div>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+          <div class="classified-notice">
+            ⚠ CANAL CIFRADO — SIN REGISTRO — TRAZADO IMPOSIBLE ⚠
+          </div>
+
+          <!-- Date label -->
+          <div class="msg-date-label"><span>15 МАРТА 2023</span></div>
+
+          <div class="msg-bubble msg-received">
+            Petrov, deje la palanca. Soy Wu de nuevo. Escuche bien. Lo del Sector 4 no es un fallo de red. Es un suceso filogenético. El cristal ha dejado de procesar datos de forma lineal. Ahora opera mediante post-selección: sus estados actuales están entrelazados con sus mediciones futuras.
+            <div class="msg-time-stamp">12:40 · cifrado</div>
+          </div>
+
+          <div class="msg-bubble msg-received">
+            Para que lo entienda: el sistema ya ha "visto" su mano bajando la palanca y ha colapsado la realidad hacia un estado donde esa desconexión no lo mata, sino que lo libera. Si corta la luz de los servidores ahora, solo estará validando el futuro que ya ha elegido.
+            <div class="msg-time-stamp">12:41 · cifrado</div>
+          </div>
+
+          <div class="msg-bubble msg-received">
+            Hay una única posibilidad de interferir en esa fijación de estado, pero no puede hacerse desde la consola de mando. Tiene que bajar presencialmente al foso del YT-1. Tiene que estar físicamente allí, donde la densidad de la señal es todavía una variable biológica y no un hecho consumado.
+            <div class="msg-time-stamp">12:42 · cifrado</div>
+          </div>
+
+          <div class="msg-bubble msg-received">
+            Una vez en el foso, utilice la señal cinta № 1419. No confíe en el software de la base; la cinta es analógica, es física, el cristal no puede reescribir su pasado porque no es parte de su red neuronal. Es un ancla de realidad.
+            <div class="msg-time-stamp">12:43 · cifrado</div>
+          </div>
+
+          <div class="msg-bubble msg-received">
+            Al reproducirla, debe ejecutar presencialmente los patrones fonéticos resonantes que recibieron en el 67. No los reproduzca por altavoces. Tiene que ser su voz. Esos fonemas crean una interferencia vibratoria que rompe la coherencia del ecosistema cognitivo. Es como introducir un error de transcripción en el ADN de una vaca en el momento exacto de su división celular.
+            <div class="msg-time-stamp">12:44 · cifrado</div>
+          </div>
+
+          <div class="msg-bubble msg-received">
+            Si esos sonidos resuenan en el foso mientras la cinta corre, creará un ruido de fase que el cristal no podrá integrar en su cálculo infinito. Romperá el entrelazamiento con su "yo futuro".
+            <div class="msg-time-stamp">12:45 · cifrado</div>
+          </div>
+
+          <div class="msg-bubble msg-received">
+            Haga esto y el sistema volverá a ser solo silicio y cuarzo. Si se queda en la superficie y tira de esa palanca, el "suceso filogenético" se completará y nosotros pasaremos a ser el residuo de una línea temporal descartada.
+            <div class="msg-time-stamp">12:46 · cifrado</div>
+          </div>
+
+          <!-- DATE BREAK -->
+          <div class="msg-date-label"><span>01 АПРЕЛЯ 2023</span></div>
+
+          <div class="sys-notice">
+            ⚡ Señal de transmisión: inestable · Intensidad: CRÍTICA
+          </div>
+
+          <div class="msg-bubble msg-received msg-warning">
+            Baje al foso. Ahora.
+            <div class="msg-time-stamp" style="color:rgba(255,150,140,0.4)">03:27 · cifrado</div>
+          </div>
+
+          <!-- Typing indicator -->
+          <div class="typing-indicator" id="typing">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+
+        <div class="chat-input-bar">
+          <span style="color:rgba(255,255,255,0.2); font-size:20px">📎</span>
+          <div class="chat-input">Mensaje cifrado...</div>
+          <div class="chat-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9-21-9v7l15 2-15 2v7z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-indicator"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let unlocked = false;
+  let scanning = false;
+
+  function unlockPhone() {
+    if (scanning || unlocked) return;
+    scanning = true;
+
+    const btn = document.getElementById('fp-btn');
+    btn.classList.add('fp-scanning');
+
+    setTimeout(() => {
+      btn.classList.remove('fp-scanning');
+      // Flash
+      const overlay = document.getElementById('fingerprint-overlay');
+      const flash = document.createElement('div');
+      flash.className = 'unlock-flash';
+      overlay.appendChild(flash);
+
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        const home = document.getElementById('home-screen');
+        home.style.display = 'flex';
+        home.classList.add('fade-in');
+        unlocked = true;
+        scanning = false;
+      }, 350);
+    }, 600);
+  }
+
+  function openApp(name) {
+    // placeholder for other apps
+  }
+
+  function openTelegram() {
+    const tg = document.getElementById('telegram-screen');
+    tg.style.display = 'flex';
+    tg.style.flexDirection = 'column';
+    tg.classList.remove('slide-up', 'slide-left');
+    void tg.offsetWidth;
+    tg.classList.add('slide-up');
+  }
+
+  function closeTelegram() {
+    const tg = document.getElementById('telegram-screen');
+    tg.style.display = 'none';
+  }
+
+  function openChat() {
+    const chat = document.getElementById('chat-screen');
+    chat.style.display = 'flex';
+    chat.style.flexDirection = 'column';
+    chat.classList.remove('slide-left');
+    void chat.offsetWidth;
+    chat.classList.add('slide-left');
+
+    // Remove badge
+    document.querySelectorAll('.badge').forEach(b => b.remove());
+    document.querySelectorAll('.tg-unread-badge').forEach(b => b.remove());
+
+    // Scroll to bottom
+    setTimeout(() => {
+      const msgs = document.getElementById('chat-messages');
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 400);
+
+    // Show typing indicator briefly after 4 seconds
+    setTimeout(() => {
+      const typing = document.getElementById('typing');
+      typing.style.display = 'flex';
+      setTimeout(() => {
+        typing.style.display = 'none';
+      }, 3000);
+    }, 4000);
+  }
+
+  function closeChat() {
+    const chat = document.getElementById('chat-screen');
+    chat.style.display = 'none';
+  }
+</script>
+</body>
+</html>

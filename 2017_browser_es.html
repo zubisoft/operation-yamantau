@@ -1,0 +1,316 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', monospace; }
+  #app { background: #c8c8c8; min-height: 600px; border: 2px solid #888; }
+  #titlebar { background: linear-gradient(to bottom, #4a6fa5, #2a4f85); padding: 4px 8px; display: flex; align-items: center; gap: 8px; }
+  #titlebar span { color: #fff; font-size: 12px; font-weight: bold; letter-spacing: 0.5px; }
+  .win-btn { width: 14px; height: 14px; border: 1px solid #888; background: #c8c8c8; font-size: 9px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #333; }
+  #toolbar { background: #d4d0c8; border-bottom: 2px solid #808080; padding: 4px 6px; display: flex; align-items: center; gap: 6px; }
+  .tb-btn { background: #d4d0c8; border: 1px solid; border-color: #fff #808080 #808080 #fff; padding: 2px 8px; font-size: 11px; cursor: pointer; color: #000; font-family: 'Courier New', monospace; }
+  .tb-btn:active { border-color: #808080 #fff #fff #808080; }
+  #menubar { background: #d4d0c8; padding: 2px 4px; display: flex; gap: 2px; border-bottom: 1px solid #808080; }
+  .menu-item { font-size: 11px; padding: 2px 8px; cursor: pointer; color: #000; }
+  .menu-item:hover { background: #000080; color: #fff; }
+  #addrbar { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: #d4d0c8; border-bottom: 1px solid #808080; }
+  #addrbar label { font-size: 11px; color: #000; }
+  #addrfield { flex: 1; border: 2px inset #808080; background: #fff; padding: 2px 4px; font-size: 11px; font-family: 'Courier New', monospace; color: #000080; }
+  #statusbar { background: #d4d0c8; border-top: 2px solid #808080; padding: 2px 8px; font-size: 10px; color: #000; display: flex; gap: 16px; }
+  .status-panel { border: 1px inset #808080; padding: 1px 8px; }
+
+  #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 480px; background: #000080; }
+  .login-box { background: #d4d0c8; border: 2px outset #fff; padding: 0; width: 340px; }
+  .login-titlebar { background: #000080; color: #fff; padding: 4px 8px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; }
+  .login-body { padding: 20px; }
+  .login-logo { text-align: center; margin-bottom: 16px; }
+  .login-logo div { font-size: 11px; color: #000080; font-weight: bold; letter-spacing: 1px; }
+  .login-logo .logo-icon { font-size: 28px; color: #cc0000; margin-bottom: 4px; }
+  .form-row { margin-bottom: 10px; }
+  .form-row label { display: block; font-size: 11px; color: #000; margin-bottom: 3px; }
+  .form-row input { width: 100%; border: 2px inset #808080; padding: 3px 5px; font-size: 12px; font-family: 'Courier New', monospace; background: #fff; }
+  .login-btns { display: flex; justify-content: flex-end; gap: 6px; margin-top: 14px; }
+  .login-btn { background: #d4d0c8; border: 2px outset #fff; padding: 4px 18px; font-size: 12px; cursor: pointer; font-family: 'Courier New', monospace; }
+  .login-btn:active { border-style: inset; }
+  .login-btn.primary { font-weight: bold; }
+  .error-msg { color: #cc0000; font-size: 11px; margin-top: 8px; display: none; }
+  .sys-info { color: #cccccc; font-size: 10px; text-align: center; margin-top: 20px; letter-spacing: 0.5px; }
+
+  #browser-screen { display: none; flex-direction: column; min-height: 480px; }
+  #content-area { flex: 1; background: #fff; padding: 12px 16px; overflow-y: auto; min-height: 430px; }
+
+  #search-results { display: none; }
+  #document-view { display: none; }
+  #home-view { display: block; }
+
+  .home-banner { background: #000080; color: #fff; padding: 8px 12px; font-size: 13px; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; }
+  .home-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .home-link-box { border: 2px outset #808080; background: #d4d0c8; padding: 8px; font-size: 11px; cursor: pointer; }
+  .home-link-box:hover { background: #bbb; }
+  .home-link-box .hl-title { font-weight: bold; color: #000080; margin-bottom: 2px; }
+  .home-link-box .hl-sub { color: #555; font-size: 10px; }
+  .search-bar-home { display: flex; gap: 6px; margin-bottom: 12px; }
+  .search-input-home { flex: 1; border: 2px inset #808080; padding: 4px 6px; font-size: 12px; font-family: 'Courier New', monospace; }
+  .search-btn-home { background: #d4d0c8; border: 2px outset #fff; padding: 4px 12px; font-size: 12px; cursor: pointer; font-family: 'Courier New', monospace; }
+  .date-time-bar { font-size: 10px; color: #555; margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 6px; display: flex; justify-content: space-between; }
+
+  .result-item { border-bottom: 1px solid #ccc; padding: 10px 0; cursor: pointer; }
+  .result-item:hover .result-title { text-decoration: underline; }
+  .result-title { color: #000080; font-size: 13px; font-weight: bold; }
+  .result-meta { color: #888; font-size: 10px; margin: 2px 0; }
+  .result-snippet { font-size: 11px; color: #333; }
+  .results-header { font-size: 11px; color: #555; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 6px; }
+
+  .doc-header { background: #f0f0f0; border: 1px solid #ccc; padding: 10px 14px; margin-bottom: 14px; }
+  .doc-stamp { font-size: 13px; font-weight: bold; color: #000080; letter-spacing: 1px; margin-bottom: 4px; }
+  .doc-meta { font-size: 11px; color: #555; }
+  .doc-body { font-size: 12px; color: #111; line-height: 1.7; white-space: pre-wrap; }
+  .doc-back { background: #d4d0c8; border: 2px outset #fff; padding: 3px 14px; font-size: 11px; cursor: pointer; font-family: 'Courier New', monospace; margin-bottom: 12px; display: inline-block; }
+  .doc-back:active { border-style: inset; }
+  .doc-classified { background: #cc0000; color: #fff; font-size: 10px; font-weight: bold; padding: 2px 8px; display: inline-block; margin-bottom: 8px; letter-spacing: 2px; }
+</style>
+
+<div id="app">
+  <div id="titlebar">
+    <span>&#x2691; ЯНДЕКС.АРМИЯ — Portal de Recursos Internos MO RF</span>
+    <div style="margin-left:auto;display:flex;gap:3px;">
+      <div class="win-btn">_</div>
+      <div class="win-btn">□</div>
+      <div class="win-btn">✕</div>
+    </div>
+  </div>
+
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-titlebar">
+        <span>&#x1F512; Авторизация — Portal Protegido MO</span>
+        <div style="width:12px;height:12px;border:1px solid #fff;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;">✕</div>
+      </div>
+      <div class="login-body">
+        <div class="login-logo">
+          <div class="logo-icon">&#x2764;</div>
+          <div>MINISTERIO DE DEFENSA — РОССИЯ</div>
+          <div style="font-size:9px;color:#888;margin-top:2px;">SISTEMA UNIFICADO DE GESTIÓN DE INFRAESTRUCTURA TI</div>
+          <div style="font-size:9px;color:#888;">Versión 4.1.2 / 2017 · Nodo: YAMANTAU-NET-04</div>
+        </div>
+        <div class="form-row">
+          <label>Nombre de usuario (Логин):</label>
+          <input type="text" id="username" placeholder="Introduzca su login..." />
+        </div>
+        <div class="form-row">
+          <label>Contraseña (Пароль):</label>
+          <input type="password" id="password" placeholder="••••••••" />
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label style="display:flex;align-items:center;gap:5px;"><input type="checkbox" /> Recordar esta estación de trabajo</label>
+        </div>
+        <div class="error-msg" id="err-msg">&#x26A0; Логин или пароль неверны. Intento registrado en el sistema.</div>
+        <div class="login-btns">
+          <button class="login-btn">Cancelar</button>
+          <button class="login-btn primary" onclick="tryLogin()">Entrar →</button>
+        </div>
+      </div>
+    </div>
+    <div class="sys-info">
+      АППС-17 · Узел: YAMANTAU-NET-04 · Sesión cifrada · TLS 1.0<br>
+      El acceso no autorizado es delito según el Art. 272 del Código Penal de la Federación Rusa
+    </div>
+  </div>
+
+  <div id="browser-screen">
+    <div id="menubar">
+      <span class="menu-item">Archivo</span>
+      <span class="menu-item">Editar</span>
+      <span class="menu-item">Ver</span>
+      <span class="menu-item">Favoritos</span>
+      <span class="menu-item">Herramientas</span>
+      <span class="menu-item">Справка</span>
+    </div>
+    <div id="toolbar">
+      <button class="tb-btn" onclick="goHome()">&#x2302; Inicio</button>
+      <button class="tb-btn" id="back-btn" onclick="goBack()" disabled>◄ Atrás</button>
+      <button class="tb-btn">&#x27F3; Actualizar</button>
+      <span style="font-size:11px;color:#555;margin-left:8px;">Пользователь: <b>cmdte.petrov</b></span>
+      <span style="font-size:11px;color:#cc0000;margin-left:12px;">&#x1F512; CONEXIÓN SEGURA · ЗАШИФРОВАНО</span>
+    </div>
+    <div id="addrbar">
+      <label>Dirección:</label>
+      <input id="addrfield" type="text" value="armiya-portal://inicio/" readonly />
+      <button class="tb-btn" style="padding:2px 12px;">Ir</button>
+    </div>
+
+    <div id="content-area">
+      <div id="home-view">
+        <div class="date-time-bar">
+          <span>&#x1F5A5; Estación: WS-04-YAMANTAU · СО: ASTRA LINUX 1.4 · Núcleo: 3.14</span>
+          <span>Lunes, 16 de enero de 2017 · 09:42:17</span>
+        </div>
+        <div class="home-banner">&#x2691; PORTAL DE GESTIÓN DE INFRAESTRUCTURA TI — МО РФ — SECCIÓN: DOCUMENTACIÓN Y ARCHIVO</div>
+        <div class="search-bar-home">
+          <input class="search-input-home" id="main-search" type="text" value="instalacion servidores 2015" />
+          <button class="search-btn-home" onclick="doSearch()">🔍 Buscar</button>
+        </div>
+        <div class="home-links">
+          <div class="home-link-box"><div class="hl-title">📁 Archivo de documentos</div><div class="hl-sub">Notas de servicio, órdenes, informes · Архив</div></div>
+          <div class="home-link-box"><div class="hl-title">🖧 Supervisión de red</div><div class="hl-sub">Estado de nodos y segmentos · Мониторинг</div></div>
+          <div class="home-link-box"><div class="hl-title">📋 Registro de incidencias</div><div class="hl-sub">Журнал технических неисправностей</div></div>
+          <div class="home-link-box"><div class="hl-title">🔐 Control de acceso</div><div class="hl-sub">Cuentas y permisos · Управление доступом</div></div>
+        </div>
+        <div style="font-size:10px;color:#888;border-top:1px solid #ccc;padding-top:8px;">
+          Último acceso: 13.01.2017 22:04 · IP: 10.4.0.91 · Sesiones en 30 días: 14
+        </div>
+      </div>
+
+      <div id="search-results">
+        <div class="results-header">
+          Resultados para: <b>"instalacion servidores 2015"</b> — 2 документа encontrados en el archivo
+        </div>
+        <div class="result-item" onclick="openDoc(1)">
+          <div class="result-title">📄 NOTA DE SERVICIO INTERNA — Expte. S4/2015-11 — Finalización de trabajos de modernización del Sector 4</div>
+          <div class="result-meta">Archivo / Sector 4 / Infraestructura · 30.11.2015 · Origen: Comandancia de la Instalación</div>
+          <div class="result-snippet">...finalización de los trabajos previstos en el Sector 4 y puesta en servicio del equipamiento adicional... instalación de armarios de servidores de ejecución industrial... tendido de fibra hasta el nodo interno de distribución...</div>
+        </div>
+        <div class="result-item" onclick="openDoc(2)">
+          <div class="result-title">📋 INFORME DE DIAGNÓSTICO DE RED #YAM-17-STG — Incidencias de temporización y tráfico no válido en Sector 4</div>
+          <div class="result-meta">Archivo / Diagnóstico / Red · 14.01.2017 · Origen: Subdivisión de Comunicaciones – Nodo Yamantau</div>
+          <div class="result-snippet">...anomalía persistente en el tráfico de salida de los racks instalados durante la modernización de 2015... generación continua de paquetes sin carga útil válida desde el segmento del Sector 4...</div>
+        </div>
+      </div>
+
+      <div id="document-view">
+        <button class="doc-back" onclick="goResults()">◄ Volver a resultados</button>
+        <div id="doc-content"></div>
+      </div>
+    </div>
+
+    <div id="statusbar">
+      <div class="status-panel">Listo · Готово</div>
+      <div class="status-panel">Zona: Intranet segura MO · Защищённая сеть</div>
+      <div class="status-panel" id="status-clock">09:42:17</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const docs = {
+  1: {
+    stamp: "NOTA DE SERVICIO INTERNA — ДОКУМЕНТ ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ",
+    classified: false,
+    meta: "Expediente: S4/2015-11  |  Fecha: 30.11.2015  |  Clasificación: USO OFICIAL · ДСП",
+    addr: "armiya-portal://archiv/S4-2015-11.doc",
+    body: `De: Comandancia de la Instalación
+A: Jefatura de Infraestructura Técnica y Comunicaciones
+Att.: Cmdte. Petrov
+
+En cumplimiento de la orden complementaria de modernización técnica del emplazamiento, se informa de la finalización de los trabajos previstos en el Sector 4 y de la puesta en servicio del equipamiento adicional autorizado.
+
+TRABAJOS EJECUTADOS:
+— reactivación de la alimentación secundaria del sector;
+— instalación de armarios de servidores de ejecución industrial;
+— tendido de fibra hasta el nodo interno de distribución;
+— integración del nuevo equipamiento en el canal externo protegido previsto en el programa de modernización.
+
+La actuación se justifica por la necesidad de centralizar registros, consolidar la telemetría del sector y permitir el procesamiento remoto de datos instrumentales sin presencia continuada de personal especializado en la zona.
+
+No se aprecia modificación sustancial del régimen operativo del Sector 4, por lo que la presente actuación queda registrada como ampliación funcional de capacidad ya prevista en documentación anterior.
+
+——————————————————————————
+Firmado: Cmdte. Petrov
+         Comandante de la Instalación
+[Подпись и печать — Firma y sello]
+Fecha: 30.11.2015`
+  },
+  2: {
+    stamp: "INFORME DE DIAGNÓSTICO DE RED  #YAM-17-STG  [СЕКРЕТНО]",
+    classified: true,
+    meta: "De: Subdivisión de Comunicaciones – Nodo Yamantau  |  Fecha: 14.01.2017  |  Clasificación: SECRETO · СЕКРЕТНО",
+    addr: "armiya-portal://archiv/YAM-17-STG.rpt",
+    body: `ASUNTO: Incidencias de temporización y tráfico no válido en Sector 4
+
+1. DESCRIPCIÓN DE LA INCIDENCIA
+Se ha detectado una anomalía persistente en el tráfico de salida asociado a los racks instalados durante la modernización de 2015. Los sistemas de inspección perimetral registran un volumen sostenido de paquetes malformados, truncados o sin carga útil válida, generados de forma continua desde el segmento correspondiente al Sector 4.
+
+2. VALORACIÓN TÉCNICA  [Техническая оценка]
+Los análisis realizados hasta la fecha atribuyen la incidencia a un problema de sincronización de reloj en los equipos afectados. Se considera probable la degradación de osciladores y módulos de temporización, con la consiguiente emisión de tramas fuera de especificación y fallos reiterados en el establecimiento de sesión.
+
+3. CONCLUSIÓN OPERATIVA  [Оперативный вывод]
+Se mantiene la valoración previa de que el sistema no dispone de capacidad efectiva de comunicación exterior en condiciones normales de protocolo. El comportamiento observado se clasifica, a efectos operativos, como bucle persistente de error de hardware, sin indicios de amenaza inmediata para la red troncal de la instalación.
+
+Observación: Según criterio del personal técnico, mientras no se complete negociación válida de sesión, el tráfico carece de utilidad operativa y puede ser tratado como ruido residual de sistema.
+
+——————————————————————————
+Subdivisión de Comunicaciones · Узел Ямантау
+Ref. interna: YAM-17-STG · 14.01.2017`
+  }
+};
+
+let prevView = null;
+
+function tryLogin() {
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  if ((u === 'petrov' || u === 'cmdte.petrov') && p === 'matryoshkaIL-2') {
+    document.getElementById('login-screen').style.display = 'none';
+    const bs = document.getElementById('browser-screen');
+    bs.style.display = 'flex';
+    bs.style.flexDirection = 'column';
+  } else {
+    document.getElementById('err-msg').style.display = 'block';
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const ls = document.getElementById('login-screen');
+    if (ls && ls.style.display !== 'none') tryLogin();
+  }
+});
+
+function showView(v) {
+  ['home-view','search-results','document-view'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById(v).style.display = 'block';
+}
+
+function goHome() {
+  prevView = null;
+  document.getElementById('addrfield').value = 'armiya-portal://inicio/';
+  document.getElementById('back-btn').disabled = true;
+  showView('home-view');
+}
+
+function doSearch() {
+  prevView = 'home-view';
+  document.getElementById('addrfield').value = 'armiya-portal://buscar/?q=instalacion+servidores+2015';
+  document.getElementById('back-btn').disabled = false;
+  showView('search-results');
+}
+
+function openDoc(id) {
+  prevView = 'search-results';
+  const d = docs[id];
+  document.getElementById('addrfield').value = d.addr;
+  let html = '';
+  if (d.classified) html += '<div class="doc-classified">&#x26A0; SECRETO / СЕКРЕТНО — ACCESO RESTRINGIDO</div>';
+  html += `<div class="doc-header"><div class="doc-stamp">${d.stamp}</div><div class="doc-meta">${d.meta}</div></div>`;
+  html += `<div class="doc-body">${d.body}</div>`;
+  document.getElementById('doc-content').innerHTML = html;
+  showView('document-view');
+}
+
+function goResults() {
+  document.getElementById('addrfield').value = 'armiya-portal://buscar/?q=instalacion+servidores+2015';
+  showView('search-results');
+}
+
+function goBack() {
+  if (prevView === 'search-results') goResults();
+  else goHome();
+}
+
+setInterval(function() {
+  const n = new Date();
+  const t = n.getHours().toString().padStart(2,'0') + ':' + n.getMinutes().toString().padStart(2,'0') + ':' + n.getSeconds().toString().padStart(2,'0');
+  const el = document.getElementById('status-clock');
+  if (el) el.textContent = t;
+}, 1000);
+</script>
