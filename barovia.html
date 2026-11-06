@@ -1,0 +1,655 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>La economía de Barovia</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Archivo:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: broadsheet economics feature. One reading column (~680px) with charts that break out to a wider 1040px measure. */
+:root{
+  --paper:#FFF1E5; --panel:#F6E3D2; --ink:#33302E; --ink-2:#66605C; --rule:#D9C8B8; --rule-strong:#33302E;
+  --oxford:#0F5499; --teal:#0D7680; --claret:#990F3D; --ochre:#A7802C; --stone:#A69B92; --sky:#7FA7CF;
+  --good:#0D7680; --bad:#C0223F;
+  --f-display:"Newsreader", "Georgia", "Times New Roman", serif;
+  --f-body:"Newsreader", "Georgia", serif;
+  --f-ui:"Archivo", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#24211F; --panel:#2F2B28; --ink:#F2E8DE; --ink-2:#B8ADA3; --rule:#4A4440; --rule-strong:#F2E8DE;
+  --oxford:#6FA3DA; --teal:#3FB5A9; --claret:#E8607F; --ochre:#D7B25E; --stone:#7F766F; --sky:#3E6A96;
+  --good:#3FB5A9; --bad:#F06C84; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#24211F; --panel:#2F2B28; --ink:#F2E8DE; --ink-2:#B8ADA3; --rule:#4A4440; --rule-strong:#F2E8DE;
+  --oxford:#6FA3DA; --teal:#3FB5A9; --claret:#E8607F; --ochre:#D7B25E; --stone:#7F766F; --sky:#3E6A96;
+  --good:#3FB5A9; --bad:#F06C84; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:19px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 64px}
+.wrap{max-width:1040px;margin:0 auto}
+.col{max-width:680px;margin:0 auto}
+a{color:var(--oxford)}
+.num,.tab{font-variant-numeric:tabular-nums lining-nums}
+
+/* Masthead */
+.mast{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--rule-strong);padding-block:18px 10px;font-family:var(--f-ui);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.mast b{color:var(--ink);font-weight:700;letter-spacing:.14em}
+.hero{padding-block:36px 8px}
+.topic{font-family:var(--f-ui);font-size:13px;font-weight:600;color:var(--claret);letter-spacing:.04em;margin:0 0 10px}
+h1{font-family:var(--f-display);font-weight:600;font-size:clamp(36px,6vw,62px);line-height:1.04;letter-spacing:-.015em;margin:0 0 16px;text-wrap:balance}
+.stand{font-size:clamp(20px,2.4vw,24px);line-height:1.4;color:var(--ink-2);margin:0 0 18px;max-width:760px;text-wrap:pretty}
+.byline{font-family:var(--f-ui);font-size:13px;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:10px;display:flex;gap:16px;flex-wrap:wrap}
+.byline b{color:var(--ink)}
+
+/* Key figures */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:4px solid var(--rule-strong);margin-top:30px}
+.kpi{padding:14px 16px 16px 0;border-right:1px solid var(--rule);margin-right:16px}
+.kpi:last-child{border-right:0;margin-right:0}
+.kpi .v{font-family:var(--f-display);font-size:clamp(38px,5vw,56px);font-weight:500;line-height:1;letter-spacing:-.02em}
+.kpi .v.hl{color:var(--claret)}
+.kpi .l{font-family:var(--f-ui);font-size:13px;color:var(--ink-2);margin-top:8px;line-height:1.35}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi:nth-child(2){border-right:0;margin-right:0}.kpi:nth-child(-n+2){border-bottom:1px solid var(--rule)}}
+
+/* Sections */
+section{padding-top:56px}
+h2{font-family:var(--f-display);font-weight:600;font-size:clamp(26px,3.4vw,34px);line-height:1.15;margin:0 0 6px;text-wrap:balance}
+.kicker{font-family:var(--f-ui);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin:0 0 8px;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:28px;height:4px;background:var(--claret)}
+p{margin:0 0 16px}
+.col p{text-wrap:pretty}
+
+/* Charts */
+figure{margin:28px 0 8px;padding-top:12px;border-top:1px solid var(--rule-strong)}
+figcaption.t{font-family:var(--f-ui);font-weight:700;font-size:17px;line-height:1.3;margin-bottom:2px}
+figcaption.s{font-family:var(--f-ui);font-size:14px;color:var(--ink-2);margin-bottom:14px;line-height:1.4}
+.src{font-family:var(--f-ui);font-size:12px;color:var(--ink-2);margin-top:12px;line-height:1.45}
+.src b{font-weight:600}
+.chart{width:100%;min-width:0}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--f-ui);fill:var(--ink-2)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+@media (max-width:820px){.grid2,.grid3{grid-template-columns:minmax(0,1fr);gap:8px}}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--f-ui);font-size:13px;color:var(--ink-2);margin-bottom:12px}
+.legend i{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px}
+
+/* Horizontal bars (HTML) */
+.hb{display:grid;grid-template-columns:minmax(0,210px) minmax(0,1fr);gap:4px 12px;align-items:center;font-family:var(--f-ui);font-size:14px}
+.hb .l{color:var(--ink);line-height:1.25}
+.hb .t{display:flex;align-items:center;gap:8px;min-width:0;height:22px}
+.hb .b{height:18px;background:var(--oxford);flex:none}
+.hb .v{color:var(--ink);font-weight:600;white-space:nowrap}
+.hb .row{display:contents}
+@media (max-width:520px){.hb{grid-template-columns:minmax(0,1fr)}.hb .l{margin-top:6px}}
+
+/* Stacked bar */
+.stack{display:flex;height:40px;width:100%;gap:2px}
+.stack > div{position:relative;min-width:2px;display:flex;align-items:center;justify-content:flex-start;padding-left:6px;font-family:var(--f-ui);font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden}
+.stackrow{display:grid;grid-template-columns:96px minmax(0,1fr) 70px;gap:12px;align-items:center;margin-bottom:10px;font-family:var(--f-ui);font-size:14px}
+.stackrow .tot{text-align:right;font-weight:700}
+@media (max-width:520px){.stackrow{grid-template-columns:minmax(0,1fr) auto}.stackrow .stack{grid-column:1 / -1;grid-row:2}}
+.keylist{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 20px;font-family:var(--f-ui);font-size:13px;margin-top:10px}
+.keylist div{display:flex;gap:8px;align-items:baseline;border-top:1px solid var(--rule);padding-top:5px}
+.keylist i{width:10px;height:10px;flex:none;align-self:center}
+.keylist span{flex:1;color:var(--ink-2)}
+.keylist b{font-weight:600;font-variant-numeric:tabular-nums}
+
+/* Annotations & quote */
+.note{font-family:var(--f-ui);font-size:14px;background:var(--panel);padding:14px 16px;margin:18px 0;line-height:1.45}
+.note b{color:var(--claret)}
+.pull{font-family:var(--f-display);font-size:clamp(24px,3vw,30px);line-height:1.25;font-weight:500;margin:34px 0;padding:18px 0;border-top:4px solid var(--claret);border-bottom:1px solid var(--rule);text-wrap:balance}
+
+/* Militia split */
+.split{display:flex;flex-wrap:wrap;gap:3px;margin:6px 0 10px}
+.split i{width:calc((100% - 49*3px)/50);aspect-ratio:1/2.2;min-width:4px;background:var(--stone)}
+.split i.p{background:var(--claret)}
+
+/* Day timeline */
+.day{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--rule-strong);margin-top:24px}
+.day > div{padding:14px 16px 6px 0;border-right:1px solid var(--rule);margin-right:16px;min-width:0}
+.day > div:last-child{border-right:0;margin-right:0}
+.day .h{font-family:var(--f-ui);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--claret)}
+.day .n{font-family:var(--f-display);font-size:22px;font-weight:600;margin:4px 0 6px}
+.day p{font-size:16px;line-height:1.45;color:var(--ink-2)}
+.day .night{background:var(--ink);color:var(--paper);padding-left:16px}
+.day .night p{color:var(--paper);opacity:.8}
+.day .night .h{color:var(--paper)}
+@media (max-width:820px){.day{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.day>div:nth-child(2){border-right:0;margin-right:0}}
+@media (max-width:480px){.day{grid-template-columns:minmax(0,1fr)}.day>div{border-right:0;margin-right:0;border-bottom:1px solid var(--rule)}}
+
+/* Simulator */
+.sim{background:var(--panel);padding:22px clamp(16px,3vw,28px) 24px;margin-top:24px}
+.sim-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:32px}
+@media (max-width:820px){.sim-grid{grid-template-columns:minmax(0,1fr)}}
+.ctl{margin-bottom:20px;font-family:var(--f-ui)}
+.ctl label{display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:6px}
+.ctl label output{font-variant-numeric:tabular-nums;color:var(--claret)}
+.ctl small{display:block;font-size:12px;color:var(--ink-2);margin-top:4px}
+input[type=range]{width:100%;accent-color:var(--claret);height:24px}
+input[type=range]:focus-visible{outline:2px solid var(--oxford);outline-offset:3px}
+.res{font-family:var(--f-ui)}
+.res .row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;border-bottom:1px solid var(--rule);padding-bottom:14px;margin-bottom:14px}
+.res .lab{font-size:12px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
+.res .big{font-family:var(--f-display);font-size:clamp(26px,3.5vw,34px);font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+.gauge{position:relative;height:16px;background:var(--paper);margin:8px 0 4px}
+.gauge .fill{position:absolute;left:0;top:0;bottom:0;background:var(--ochre)}
+.gauge .mark{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink)}
+.gauge-l{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2)}
+.verdict{margin-top:14px;padding:12px 14px;border-left:4px solid var(--good);background:var(--paper);font-size:14px;line-height:1.45}
+.verdict.bad{border-left-color:var(--bad)}
+.verdict.warn{border-left-color:var(--ochre)}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;margin-right:6px;color:var(--paper);background:var(--good)}
+.pill.bad{background:var(--bad)} .pill.warn{background:var(--ochre)}
+button.reset{font-family:var(--f-ui);font-size:13px;font-weight:600;background:transparent;border:1px solid var(--ink);color:var(--ink);padding:7px 12px;cursor:pointer}
+button.reset:hover{background:var(--ink);color:var(--paper)}
+button.reset:focus-visible{outline:2px solid var(--oxford);outline-offset:2px}
+
+/* Questions */
+.qs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px;margin-top:20px}
+.qs > div{border-top:1px solid var(--rule-strong);padding:12px 0 16px}
+.qs h3{font-family:var(--f-display);font-size:21px;font-weight:600;margin:0 0 6px;line-height:1.25}
+.qs p{font-size:16px;color:var(--ink-2);margin:0}
+@media (max-width:640px){.qs{grid-template-columns:minmax(0,1fr)}}
+blockquote.nakht{margin:28px 0;padding:24px clamp(16px,3vw,32px);background:var(--ink);color:var(--paper);font-family:var(--f-display);font-style:italic;font-size:19px;line-height:1.55}
+blockquote.nakht p{margin:0 0 12px}
+blockquote.nakht cite{display:block;font-family:var(--f-ui);font-style:normal;font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.75;margin-top:14px}
+.verdict-box{border:2px solid var(--rule-strong);padding:20px 22px;margin-top:28px}
+.verdict-box h3{font-family:var(--f-ui);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 8px;color:var(--claret)}
+.verdict-box p{font-family:var(--f-display);font-size:21px;line-height:1.45;margin:0}
+footer{margin-top:56px;border-top:1px solid var(--rule-strong);padding-top:14px;font-family:var(--f-ui);font-size:12px;color:var(--ink-2);line-height:1.6}
+footer p{margin:0 0 8px;font-size:12px}
+@media (prefers-reduced-motion:no-preference){.gauge .fill,.hb .b,.stack>div{transition:width .35s ease}}
+</style>
+
+<div class="wrap">
+  <div class="mast"><b>Gaceta del Valle</b><span>Economía · Demografía · Hacienda</span><span class="num">Barovia, año 735 C.B.</span></div>
+
+  <header class="hero">
+    <p class="topic">Economía rural / Barovia</p>
+    <h1>Cincuenta hombres armados para una aldea que apenas se alimenta</h1>
+    <p class="stand">Un estudio económico, demográfico y fiscal de una villa de 300 habitantes, 50 milicianos y un inquietante exceso de cadáveres. Las cuentas solo cuadran si alguien de fuera paga.</p>
+    <div class="byline"><span>Por <b>la oficina de Nakht</b></span><span>Modelo de diseño para campaña; cifras estimadas</span><span>Unidad de cuenta: po (1 po = 10 pp)</span></div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v num">300</div><div class="l">habitantes en 65 hogares</div></div>
+      <div class="kpi"><div class="v num hl">50</div><div class="l">milicianos</div></div>
+      <div class="kpi"><div class="v num">16,7%</div><div class="l">de la población está armada</div></div>
+      <div class="kpi"><div class="v num hl">31%</div><div class="l">de la fuerza laboral potencial (~160 personas) es milicia</div></div>
+    </div>
+  </header>
+
+  <!-- 1 -->
+  <section>
+    <div class="col">
+      <p class="kicker">La anomalía</p>
+      <h2>Barovia tiene demasiados milicianos</h2>
+      <p>Para una comunidad agraria preindustrial, la proporción es extraordinaria. Si unas 160 personas tienen edad y salud para trabajar, los 50 milicianos son casi uno de cada tres brazos disponibles. Sin ingresos extraordinarios, no quedaría gente suficiente para sembrar, reparar tejados, cuidar el ganado y cortar leña.</p>
+      <p>Caben tres explicaciones: una <b>milicia vecinal</b> de campesinos movilizados por turnos, una <b>guarnición subvencionada</b> desde el castillo, o una <b>economía extractiva</b> que sostiene a los soldados con tributos, confiscaciones y trabajo forzoso. La primera es la única que se sostiene sola. La segunda es la más interesante si el conde mantiene a propósito una fuerza desproporcionada.</p>
+    </div>
+    <figure>
+      <figcaption class="t">Uno de cada seis barovianos lleva armas</figcaption>
+      <figcaption class="s">Población de la villa por grupo de edad; cada cuadro es un habitante</figcaption>
+      <div class="legend" id="waffle-legend"></div>
+      <div class="chart" id="waffle"></div>
+      <p class="src"><b>Supuesto:</b> 65 hogares de 4,6 personas. Niños &lt;14 años: 77; adultos 14–59: 181; mayores de 60: 42. Como contraste, una adaptación publicada del módulo propone 350 habitantes y solo 25 milicianos.</p>
+    </figure>
+  </section>
+
+  <!-- 2 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Demografía</p>
+      <h2>Una villa de labradores, con un herrero que también siembra</h2>
+      <p>La clasificación es por actividad principal, no exclusiva. El herrero cultiva hortalizas, el tabernero tiene gallinas y el campesino arregla sus propias herramientas. En una sociedad así trabajan también los niños mayores y los ancianos: la frontera entre población activa e inactiva es borrosa.</p>
+    </div>
+    <figure>
+      <figcaption class="t">Más de la mitad de los hogares vive del cereal</figcaption>
+      <figcaption class="s">Hogares por actividad principal (total: 65)</figcaption>
+      <div class="chart hb" id="hogares"></div>
+    </figure>
+    <div class="col"><p class="note">La verdadera riqueza de Barovia no está en sus monedas, sino en su <b>capacidad para producir y almacenar comida</b>.</p></div>
+  </section>
+
+  <!-- 3 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Agricultura</p>
+      <h2>Centeno, cebada y avena bajo un cielo que nunca se abre</h2>
+      <p>Con nubes permanentes, humedad y veranos fríos, el trigo quedaría reservado a las mejores parcelas. El grueso del campo serían cereales rústicos, legumbres y nabos, coles y cebollas. La villa explota unas 350 hectáreas de cultivo, barbecho y pasto, sin contar el bosque: 3,5 km² repartidos en parcelas familiares con derechos comunales.</p>
+    </div>
+    <figure>
+      <figcaption class="t">Un tercio de la tierra se dedica al cereal; otro tercio descansa o sirve de pasto</figcaption>
+      <figcaption class="s">Uso del terreno agrícola, hectáreas</figcaption>
+      <div class="chart" id="tierra"></div>
+    </figure>
+
+    <figure>
+      <figcaption class="t">Del grano cosechado al grano que se come, el margen es de 15 toneladas</figcaption>
+      <figcaption class="s">Balance anual de cereal (centeno, cebada y avena), toneladas</figcaption>
+      <div class="chart" id="cascada"></div>
+      <p class="src"><b>Supuestos:</b> 2.200 kcal diarias por habitante = 241 millones de kcal al año. El cereal aporta ~70% de la dieta (≈168 M kcal); a ~3.300 kcal/kg son ≈51 t de consumo humano. El margen restante debe cubrir pienso, tributos, cerveza y reserva.</p>
+    </figure>
+
+    <div class="grid2">
+      <figure>
+        <figcaption class="t">Pan negro, gachas y potaje</figcaption>
+        <figcaption class="s">Origen estimado de las calorías consumidas, millones de kcal al año</figcaption>
+        <div class="chart" id="dieta"></div>
+        <p class="src">Composición hipotética. La carne es ocasional para la mayoría; la disponibilidad cambia mucho con las estaciones.</p>
+      </figure>
+      <figure>
+        <figcaption class="t">Otras cosechas</figcaption>
+        <figcaption class="s">Producción bruta anual, toneladas</figcaption>
+        <div class="chart hb" id="cosechas"></div>
+        <p class="src">Referencia histórica: en la Inglaterra medieval se estiman 5–12 acres de cultivo por familia. Barovia exige un ajuste adicional por clima.</p>
+      </figure>
+    </div>
+    <div class="col">
+      <p class="note"><b>El problema es el invierno.</b> Una cosecha un 20% peor deja ≈51 t de cereal aprovechable: exactamente lo que come la gente. No queda nada para el ganado, el conde ni la reserva. Siguen la venta forzosa de animales, el endeudamiento y las muertes entre los más débiles.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Ganado y bosque</p>
+      <h2>La seguridad es un factor de producción</h2>
+      <p>El ganado complementa la dieta y aporta estiércol, lana, cuero y tiro. El bosque da leña, carbón, madera, caza menor, setas y frutos, y en una Barovia fría cada hogar quema enormes cantidades de combustible. Pero cada lobo, criatura nocturna o bandido encarece salir de la villa. <b>Cuanto más peligroso es alejarse, menos tierra se cultiva y menos bosque se aprovecha.</b></p>
+    </div>
+    <figure>
+      <figcaption class="t">Muchas bocas pequeñas, pocas vacas</figcaption>
+      <figcaption class="s">Cabaña ganadera estimada, cabezas (orden de magnitud)</figcaption>
+      <div class="chart hb" id="ganado"></div>
+    </figure>
+  </section>
+
+  <!-- 5 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Oficios y comercio</p>
+      <h2>Una economía de deudas y favores, no de mercado</h2>
+      <p>Trescientas personas no dan clientela para muchos negocios especializados. Los intercambios son locales, repetidos y dependen de la reputación: un campesino paga al herrero con cereal y al molinero con una fracción de la molienda. Hay precedentes históricos de salarios y obligaciones abonados sobre todo en especie.</p>
+    </div>
+    <div class="grid3" style="margin-top:20px">
+      <figure>
+        <figcaption class="t">Talleres</figcaption>
+        <p class="src" style="margin-top:4px;font-size:14px;line-height:1.5"><b>Herrería:</b> arados, herraduras, bisagras; armas como actividad secundaria.<br><b>Carpintería:</b> carros, puertas, techumbres y ataúdes.<br><b>Tejedoras:</b> ropa, mantas y sacos, casi siempre en casa.</p>
+      </figure>
+      <figure>
+        <figcaption class="t">Servicios</figcaption>
+        <p class="src" style="margin-top:4px;font-size:14px;line-height:1.5"><b>Molino:</b> cobra una parte de la harina.<br><b>Horno comunal:</b> pan para algunas familias.<br><b>Taberna-posada:</b> viajeros, contratación y crédito.<br><b>Enterrador:</b> oficio compartido, pese a la demanda.</p>
+      </figure>
+      <figure>
+        <figcaption class="t">Comercio exterior</figcaption>
+        <p class="src" style="margin-top:4px;font-size:14px;line-height:1.5"><b>Importa:</b> sal, hierro, herramientas, tejidos, medicinas, lujos.<br><b>Exporta:</b> lana, pieles, madera, cereal en años buenos, servicios a viajeros.<br>Una sola caravana mensual sería significativa. Si la niebla cierra los caminos, el comerciante fija el precio.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Defensa</p>
+      <h2>El presupuesto de los cincuenta</h2>
+      <p>La villa puede tener 50 hombres armados, pero no 50 soldados dedicados solo a eso. El modelo sostenible es una guardia de 8 profesionales (el sheriff, dos subordinados de confianza y cinco guardias) y 42 vecinos que prestan servicio por turnos: de cuatro a ocho patrullando de día y dos o tres de noche. Una alarma general moviliza a los 50, a costa de abandonar la cosecha.</p>
+    </div>
+    <figure>
+      <figcaption class="t">Solo 8 de los 50 viven de las armas en el modelo sostenible</figcaption>
+      <figcaption class="s">Composición de la milicia; cada barra es un miliciano</figcaption>
+      <div class="legend"><span><i style="background:var(--claret)"></i>Profesionales permanentes: 8</span><span><i style="background:var(--stone)"></i>Vecinos a tiempo parcial: 42</span></div>
+      <div class="split" id="split" aria-label="8 profesionales y 42 milicianos a tiempo parcial"></div>
+    </figure>
+    <div class="grid2">
+      <figure>
+        <figcaption class="t">625 po al año, con austeridad</figcaption>
+        <figcaption class="s">Coste anual estimado de la milicia vecinal, po</figcaption>
+        <div class="chart hb" id="milicia"></div>
+        <p class="src">Parte de la paga se entrega en alojamiento, comida, cereal y exención de impuestos.</p>
+      </figure>
+      <figure>
+        <figcaption class="t">Profesionalizar a los 50 multiplicaría el coste por cinco</figcaption>
+        <figcaption class="s">Coste anual de la milicia según modelo, po</figcaption>
+        <div class="chart" id="modelos"></div>
+        <p class="src">Con salarios modestos. El rango profesional (2.500–3.500 po) supera tres veces todos los ingresos municipales.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Hacienda</p>
+      <h2>Un presupuesto equilibrado solo sobre el papel</h2>
+      <p>La fiscalidad tiene tres capas: impuestos señoriales para el conde, tributos municipales para la guardia y los bienes comunes, y contribuciones a la iglesia. Las 380 po de los hogares rara vez son monedas: son cereal, ganado y jornadas de trabajo valoradas en plata.</p>
+    </div>
+    <figure>
+      <figcaption class="t">La milicia se come el 78% del gasto; el conde paga casi un tercio del ingreso</figcaption>
+      <figcaption class="s">Presupuesto municipal anual, po</figcaption>
+      <div class="chart" id="presupuesto"></div>
+    </figure>
+    <div class="col">
+      <p class="note">Sin las <b>250 po de subvención señorial</b>, la villa tendría que reducir la guardia o subir mucho los tributos. Y si el conde cobra sus propios impuestos aparte de estas 800 po, la presión sobre las familias se vuelve insoportable. El límite es físico: quien se lleva la semilla de la próxima siembra destruye su propia renta.</p>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Desigualdad</p>
+      <h2>Quien tiene el grano en invierno tiene el poder</h2>
+      <p>Barovia funciona con dos circuitos. La economía campesina vive de autoconsumo, trueque y deudas, con poca moneda. La economía del poder mueve impuestos, suministros militares y rentas señoriales. Por eso el sheriff puede tener mejores botas, armas y casa que sus vecinos en una villa muy pobre: tal vez sin corrupción, solo con suministros del castillo.</p>
+    </div>
+    <figure>
+      <figcaption class="t">Cinco hogares acreedores frente a trece que dependen del crédito</figcaption>
+      <figcaption class="s">Hogares por estrato económico (total: 65)</figcaption>
+      <div class="chart" id="estratos"></div>
+      <p class="src">El burgomaestre, los grandes propietarios y el comerciante principal serían probablemente los acreedores de buena parte de la villa.</p>
+    </figure>
+  </section>
+
+  <!-- 9 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Mortalidad</p>
+      <h2>Los muertos también cuestan dinero</h2>
+      <p>Con una mortalidad ordinaria de 25 a 40 por mil, una villa de 300 personas entierra entre 8 y 12 vecinos al año. Cada adulto muerto es una parte de la fuerza productiva de su hogar: su pérdida puede costar la cosecha, obligar a vender animales para pagar deudas y dejar a su familia dependiendo de otros.</p>
+    </div>
+    <div class="grid2">
+      <figure>
+        <figcaption class="t">Doce asesinatos al año duplican la mortalidad</figcaption>
+        <figcaption class="s">Muertes anuales: naturales (≈10) más víctimas del Segador de Medianoche, y tasa por mil</figcaption>
+        <div class="legend"><span><i style="background:var(--stone)"></i>Naturales</span><span><i style="background:var(--claret)"></i>Asesinatos</span></div>
+        <div class="chart" id="muertes"></div>
+      </figure>
+      <figure>
+        <figcaption class="t">A dos muertes por mes, la villa se vacía en una década</figcaption>
+        <figcaption class="s">Población proyectada según víctimas anuales, habitantes</figcaption>
+        <div class="chart" id="proyeccion"></div>
+        <p class="src"><b>Supuesto ilustrativo:</b> natalidad 35‰, mortalidad natural 33‰, sin inmigración ni huida. No incluye el abandono de campos por miedo.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Vida cotidiana</p>
+      <h2>Un día de trabajo en Barovia</h2>
+    </div>
+    <div class="day">
+      <div><div class="h">Amanecer</div><div class="n">A los campos</div><p>Se encienden los hogares y se alimenta a los animales. Si los caminos son peligrosos, los labradores salen y vuelven en grupo.</p></div>
+      <div><div class="h">Mediodía</div><div class="n">Molino y fragua</div><p>El molino recibe grano, el herrero repara aperos y la taberna sirve potaje. Un mercado concurrido es ocasional, no diario.</p></div>
+      <div><div class="h">Anochecer</div><div class="n">Se cierran accesos</div><p>Regresan los trabajadores, se guarda el ganado y la guardia cierra las entradas. Tareas domésticas y reparaciones a la luz del fuego.</p></div>
+      <div class="night"><div class="h">22:00</div><div class="n">Toque de queda</div><p>Menos calles que vigilar con dos o tres guardias, y cualquiera que se mueva después es sospechoso.</p></div>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Simulador</p>
+      <h2>¿Aguanta la villa? Pruébelo usted</h2>
+      <p>Mueva los controles para ver qué pasa con las cuentas y el granero según cuántos milicianos sean profesionales, cómo venga la cosecha y cuánto aporte el conde.</p>
+    </div>
+    <div class="sim">
+      <div class="sim-grid">
+        <div>
+          <div class="ctl"><label for="s-pro">Milicianos profesionales <output id="o-pro" class="num">8 / 50</output></label>
+            <input type="range" id="s-pro" min="8" max="50" step="1" value="8">
+            <small>Cada profesional extra cuesta 50 po netas y deja de trabajar el campo.</small></div>
+          <div class="ctl"><label for="s-har">Cosecha frente a un año normal <output id="o-har" class="num">100%</output></label>
+            <input type="range" id="s-har" min="50" max="130" step="5" value="100">
+            <small>Afecta al grano y a las contribuciones de los hogares y el mercado.</small></div>
+          <div class="ctl"><label for="s-sub">Subvención del conde <output id="o-sub" class="num">250 po</output></label>
+            <input type="range" id="s-sub" min="0" max="3000" step="50" value="250">
+            <small>El oro paga soldados, pero no hace crecer centeno.</small></div>
+          <button class="reset" id="reset" type="button">Restablecer escenario base</button>
+        </div>
+        <div class="res">
+          <div class="row3">
+            <div><div class="lab">Ingresos</div><div class="big" id="r-in">800</div></div>
+            <div><div class="lab">Gastos</div><div class="big" id="r-out">800</div></div>
+            <div><div class="lab">Saldo</div><div class="big" id="r-bal">0</div></div>
+          </div>
+          <div class="lab">Grano para la mesa (t)</div>
+          <div class="gauge" id="g-grain"><div class="fill"></div><div class="mark"></div></div>
+          <div class="gauge-l"><span id="r-grain">66,5 t disponibles</span><span>consumo humano: 51 t</span></div>
+          <div style="height:12px"></div>
+          <div class="lab">Brazos civiles disponibles</div>
+          <div class="gauge" id="g-lab"><div class="fill" style="background:var(--oxford)"></div></div>
+          <div class="gauge-l"><span id="r-lab">152 de 160</span><span id="r-labp">95%</span></div>
+          <div class="verdict" id="verdict"></div>
+        </div>
+      </div>
+      <p class="src" style="margin-top:18px">Modelo simplificado. Ingresos = (380 hogares + 125 tasas) × cosecha + 45 multas + subvención. Gastos = 800 base + 50 po por profesional por encima de 8. Grano aprovechable = 78,5 t × cosecha × brazos disponibles − 12 t de semilla. No incluye los impuestos propios del conde ni compras de grano exterior.</p>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section>
+    <div class="col">
+      <p class="kicker">Conclusiones</p>
+      <h2>Las cuatro preguntas que Nakht debería hacer</h2>
+    </div>
+    <div class="qs">
+      <div><h3>¿Por qué 50 milicianos?</h3><p>Si la amenaza viene de fuera, deberían patrullar caminos y proteger campos. Si vigilan sobre todo a los vecinos, su función es el control de la población.</p></div>
+      <div><h3>¿Quién los paga?</h3><p>Si cobran sueldo y el sheriff tiene fondos abundantes, alguien los provee. Esa dependencia puede explicar su conducta.</p></div>
+      <div><h3>¿Cómo come el pueblo?</h3><p>Hay que encontrar campos, molino, graneros, ganado y rutas. Si no existen a escala suficiente, la villa vive de suministros externos o de algo sobrenatural.</p></div>
+      <div><h3>¿Por qué no investiga?</h3><p>En una villa tan pequeña, cada asesinato es una crisis demográfica y económica. Rechazar ayuda razonable no es lo que haría un responsable de seguridad.</p></div>
+    </div>
+
+    <div class="col">
+      <blockquote class="nakht">
+        <p>«Decidme, buen sheriff, algo me causa una profunda admiración. Una villa tan modesta, cuyos campos apenas parecen capaces de sustentar a sus habitantes, mantiene sin embargo una fuerza de cincuenta hombres armados.</p>
+        <p>Sin duda debéis ser un administrador extraordinario. En mis tierras del sur, alimentar a tantos soldados exigiría graneros generosos, una hacienda floreciente y, sobre todo, una población considerablemente más numerosa.</p>
+        <p>¿Cómo lo conseguís? ¿Es acaso la generosidad de vuestro señor, la prosperidad de vuestros campos o algún secreto de administración que este humilde sacerdote haría bien en aprender?</p>
+        <p>Os aseguro que mi curiosidad es puramente académica. Aunque debo confesar que también me intriga cómo una villa tan diligentemente protegida puede sufrir tantos asesinatos.»</p>
+        <cite>Nakht, ante el sheriff de Barovia</cite>
+      </blockquote>
+
+      <div class="verdict-box">
+        <h3>Veredicto económico</h3>
+        <p>Barovia puede funcionar como una comunidad agraria pobre, aislada y vulnerable, con 300 habitantes y 50 vecinos movilizables. Si esos 50 son soldados profesionales permanentes, la villa no puede sostenerlos por sí misma. Ese desequilibrio señala quién ejerce de verdad el poder.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Metodología.</b> Todas las cifras son estimaciones de diseño para una campaña de rol ambientada en Barovia (Ravenloft), no datos históricos. Las tasas de mortalidad, rendimientos agrícolas y la referencia de 5–12 acres por familia proceden de estimaciones generales sobre la Europa medieval. Los salarios son supuestos de esta simulación, no precios oficiales de ningún reglamento.</p>
+    <p>Referencias de ambientación: adaptación publicada de Barovia (350 habitantes, milicia de 25); estudios sobre la vida en la aldea medieval inglesa; trabajos sobre pagos en especie (King's College London).</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+  const fmt = (n, d=0) => n.toLocaleString("es-ES", {minimumFractionDigits:d, maximumFractionDigits:d});
+  function s(tag, attrs, parent){ const e = document.createElementNS(NS, tag); for (const k in attrs){ if(k==="text") e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); } if(parent) parent.appendChild(e); return e; }
+  const W = id => document.getElementById(id);
+
+  /* Horizontal bars */
+  function hbars(id, rows, opt={}){
+    const host = W(id); const max = opt.max || Math.max(...rows.map(r=>r.v));
+    host.innerHTML = rows.map(r => `<div class="row"><div class="l">${r.l}</div><div class="t"><div class="b" style="width:calc(${(r.v/max*100).toFixed(2)}% - ${opt.labW||56}px * ${(r.v/max).toFixed(3)});background:var(${r.c||opt.c||'--oxford'})"></div><span class="v num">${opt.fmt?opt.fmt(r.v):fmt(r.v)}</span></div></div>`).join("");
+  }
+  hbars("hogares", [
+    {l:"Agricultores y pequeños propietarios", v:28, c:"--ochre"},
+    {l:"Jornaleros sin tierra", v:10, c:"--ochre"},
+    {l:"Artesanos", v:7},
+    {l:"Ganaderos, pastores y lecheros", v:5},
+    {l:"Leñadores y carboneros", v:4},
+    {l:"Comercio, taberna y transporte", v:4},
+    {l:"Administración, iglesia y servicios", v:4},
+    {l:"Viudas, ancianos y dependientes", v:3, c:"--stone"}
+  ]);
+  hbars("cosechas", [
+    {l:"Centeno, cebada y avena", v:87.5, c:"--ochre"},
+    {l:"Nabos, coles y hortalizas", v:45, c:"--teal"},
+    {l:"Habas y guisantes secos", v:11, c:"--oxford"}
+  ], {fmt:v=>fmt(v, v%1?1:0)});
+  hbars("ganado", [
+    {l:"Aves de corral", v:200},{l:"Cerdos", v:80},{l:"Ovejas", v:60},{l:"Cabras", v:35},{l:"Vacas", v:15}
+  ], {c:"--teal"});
+  hbars("milicia", [
+    {l:"Sheriff y 7 guardias", v:400, c:"--claret"},
+    {l:"Armas, escudos y equipo", v:75},
+    {l:"Raciones de servicio", v:65},
+    {l:"Antorchas, aceite, caballos", v:45},
+    {l:"Compensación por turnos", v:40}
+  ]);
+
+  /* Stacked bars */
+  function stacks(id, groups, keys){
+    const host = W(id); const max = Math.max(...groups.map(g=>g.segs.reduce((a,b)=>a+b.v,0)));
+    let h = groups.map(g=>{ const tot = g.segs.reduce((a,b)=>a+b.v,0);
+      return `<div class="stackrow"><div>${g.label||""}</div><div class="stack" style="width:${(tot/max*100).toFixed(2)}%">${g.segs.map(sg=>`<div style="flex:${sg.v} 1 0;background:var(${sg.c})" title="${sg.l}: ${fmt(sg.v)}">${sg.v/max>0.07?fmt(sg.v):""}</div>`).join("")}</div><div class="tot num">${g.tot||fmt(tot)}</div></div>`; }).join("");
+    if (keys) h += `<div class="keylist">${keys.map(k=>`<div><i style="background:var(${k.c})"></i><span>${k.l}</span><b>${k.v}</b></div>`).join("")}</div>`;
+    host.innerHTML = h;
+  }
+  const tierra = [
+    {l:"Cereales", v:125, c:"--ochre"},{l:"Legumbres", v:22, c:"--oxford"},{l:"Nabos, coles, hortalizas", v:15, c:"--sky"},
+    {l:"Huertas, frutales, forraje", v:18, c:"--teal"},{l:"Barbecho", v:70, c:"--stone"},{l:"Pastos permanentes", v:100, c:"--claret"}];
+  stacks("tierra", [{label:"350 ha", segs:tierra, tot:"3,5 km²"}], tierra.map(t=>({l:t.l, c:t.c, v:fmt(t.v)+" ha"})));
+  const dieta = [{l:"Cereales", v:168, c:"--ochre"},{l:"Legumbres", v:31, c:"--oxford"},{l:"Lácteos, grasas, carne", v:30, c:"--claret"},{l:"Hortalizas y raíces", v:12, c:"--teal"}];
+  stacks("dieta", [{label:"241 M", segs:dieta}], dieta.map(d=>({l:d.l, c:d.c, v:fmt(d.v)+" M · "+Math.round(d.v/241*100)+"%"})));
+  stacks("presupuesto", [
+    {label:"Ingresos", segs:[{l:"Hogares",v:380,c:"--oxford"},{l:"Peajes, mercado, molino",v:125,c:"--sky"},{l:"Multas",v:45,c:"--teal"},{l:"Subvención señorial",v:250,c:"--claret"}]},
+    {label:"Gastos", segs:[{l:"Sheriff y milicia",v:625,c:"--claret"},{l:"Caminos, pozo",v:55,c:"--stone"},{l:"Almacén y asistencia",v:65,c:"--ochre"},{l:"Administración",v:30,c:"--sky"},{l:"Reserva",v:25,c:"--teal"}]}
+  ], [
+    {l:"Ingreso · Contribución de los hogares", c:"--oxford", v:"380"},{l:"Ingreso · Peajes, mercado, molino", c:"--sky", v:"125"},
+    {l:"Ingreso · Multas y servicios", c:"--teal", v:"45"},{l:"Ingreso · Subvención señorial", c:"--claret", v:"250 (31%)"},
+    {l:"Gasto · Sheriff y milicia", c:"--claret", v:"625 (78%)"},{l:"Gasto · Caminos, pozo, comunales", c:"--stone", v:"55"},
+    {l:"Gasto · Almacén de grano y asistencia", c:"--ochre", v:"65"},{l:"Gasto · Administración y mensajería", c:"--sky", v:"30"},
+    {l:"Gasto · Reserva para contingencias", c:"--teal", v:"25"}]);
+  const est = [{l:"Acomodados",v:5,c:"--claret"},{l:"Campesinos establecidos",v:25,c:"--oxford"},{l:"Modestos y vulnerables",v:22,c:"--sky"},{l:"Pobres o dependientes",v:13,c:"--stone"}];
+  stacks("estratos", [{label:"65 hogares", segs:est, tot:"65"}], [
+    {l:"Acomodados: tierras, almacenes, tiro y crédito sobre terceros", c:"--claret", v:"5"},
+    {l:"Establecidos: subsisten; algún excedente en años buenos", c:"--oxford", v:"25"},
+    {l:"Modestos: cultivo, jornal y oficio; frágiles ante malas cosechas", c:"--sky", v:"22"},
+    {l:"Pobres: dependen de jornales, familia, crédito o caridad", c:"--stone", v:"13"}]);
+
+  /* Militia split */
+  W("split").innerHTML = Array.from({length:50}, (_,i)=>`<i class="${i<8?'p':''}"></i>`).join("");
+
+  /* Responsive SVG charts */
+  const charts = [];
+  function chart(id, draw){ const host = W(id); const r = () => { const w = host.clientWidth; if(!w) return; host.innerHTML=""; draw(host, w); }; charts.push(r); r(); }
+  let rt; window.addEventListener("resize", ()=>{ clearTimeout(rt); rt = setTimeout(()=>charts.forEach(f=>f()), 120); });
+
+  // Waffle
+  const groups = [{l:"Milicianos", n:50, c:"--claret"},{l:"Otros adultos 14–59", n:131, c:"--oxford"},{l:"Niños menores de 14", n:77, c:"--sky"},{l:"Mayores de 60", n:42, c:"--stone"}];
+  W("waffle-legend").innerHTML = groups.map(g=>`<span><i style="background:var(${g.c})"></i>${g.l}: <b class="num">${g.n}</b></span>`).join("");
+  chart("waffle", (host, w) => {
+    const cols = w < 520 ? 20 : 30, rows = 300/cols, gap = 2, cs = (w - gap*(cols-1))/cols;
+    const svg = s("svg", {viewBox:`0 0 ${w} ${rows*(cs+gap)}`, role:"img", "aria-label":"300 habitantes: 50 milicianos, 131 otros adultos, 77 niños, 42 mayores"}, host);
+    let i = 0; groups.forEach(g => { for (let k=0;k<g.n;k++,i++){ const c = Math.floor(i/rows), r = i%rows;
+      s("rect", {x:c*(cs+gap), y:r*(cs+gap), width:cs, height:cs, style:`fill:var(${g.c})`}, svg); } });
+  });
+
+  // Waterfall
+  chart("cascada", (host, w) => {
+    const steps = [
+      {l:"Cosecha bruta", from:0, to:87.5, c:"--ochre", t:"87,5"},
+      {l:"Semilla", from:87.5, to:75.5, c:"--stone", t:"−12"},
+      {l:"Pérdidas", from:75.5, to:66.5, c:"--stone", t:"−9"},
+      {l:"Aprovechable", from:0, to:66.5, c:"--ochre", t:"66,5"},
+      {l:"Consumo humano", from:66.5, to:15.5, c:"--oxford", t:"−51"},
+      {l:"Margen", from:0, to:15.5, c:"--claret", t:"15,5"}];
+    const narrow = w < 560, H = narrow ? 300 : 340, top = 30, bottom = narrow ? 46 : 34, left = 30, right = 8;
+    const svg = s("svg", {viewBox:`0 0 ${w} ${H}`, role:"img", "aria-label":"Balance de cereal: 87,5 t cosechadas, 66,5 aprovechables, 51 de consumo humano y 15,5 de margen"}, host);
+    const y = v => top + (H-top-bottom) * (1 - v/90), bw = (w-left-right)/steps.length;
+    [0,20,40,60,80].forEach(v => { s("line", {x1:left, x2:w-right, y1:y(v), y2:y(v), style:`stroke:var(${v?'--rule':'--ink'});stroke-width:1`}, svg); s("text", {x:0, y:y(v)+4, "font-size":12, text:v}, svg); });
+    steps.forEach((st,i) => { const x = left + i*bw + bw*0.15, ww = bw*0.7, y1 = y(Math.max(st.from, st.to)), y2 = y(Math.min(st.from, st.to));
+      s("rect", {x, y:y1, width:ww, height:y2-y1, style:`fill:var(${st.c})`}, svg);
+      s("text", {x:x+ww/2, y:y1-7, "text-anchor":"middle", "font-size":narrow?12:14, "font-weight":700, style:"fill:var(--ink)", text:st.t}, svg);
+      const words = st.l.split(" "); const lines = narrow && words.length>1 ? words : [st.l];
+      lines.forEach((ln,j)=> s("text", {x:x+ww/2, y:H-bottom+16+j*13, "text-anchor":"middle", "font-size":narrow?11:13, text:ln}, svg));
+      if (i < steps.length-1 && i!==2) { const nxt = steps[i+1]; const yy = y(st.to); s("line", {x1:x+ww, x2:x+bw, y1:yy, y2:yy, style:"stroke:var(--ink-2);stroke-width:1;stroke-dasharray:2 2"}, svg); }
+    });
+    // bad-year marker on "Aprovechable"
+    const xA = left + 3*bw + bw*0.15, yb = y(50.8);
+    s("line", {x1:xA-6, x2:xA+bw*0.7+6, y1:yb, y2:yb, style:"stroke:var(--bad);stroke-width:2;stroke-dasharray:5 3"}, svg);
+    s("text", {x:xA - 10, y:yb+4, "text-anchor":"end", "font-size":narrow?10:12, "font-weight":600, style:"fill:var(--bad)", text: narrow ? "año malo" : "año malo (−20%): 50,8"}, svg);
+    s("text", {x:left, y:14, "font-size":12, text:"toneladas"}, svg);
+  });
+
+  // Deaths
+  chart("muertes", (host, w) => {
+    const data = [0,3,6,12,24], nat = 10, H = 280, top = 34, bottom = 40, left = 28, right = 6;
+    const svg = s("svg", {viewBox:`0 0 ${w} ${H}`, role:"img", "aria-label":"Muertes anuales según número de asesinatos"}, host);
+    const y = v => top + (H-top-bottom)*(1 - v/36), bw = (w-left-right)/data.length;
+    [0,10,20,30].forEach(v=>{ s("line",{x1:left,x2:w-right,y1:y(v),y2:y(v),style:`stroke:var(${v?'--rule':'--ink'})`},svg); s("text",{x:0,y:y(v)+4,"font-size":12,text:v},svg); });
+    data.forEach((m,i)=>{ const x = left+i*bw+bw*0.2, ww = bw*0.6;
+      s("rect",{x,y:y(nat),width:ww,height:y(0)-y(nat),style:"fill:var(--stone)"},svg);
+      if(m) s("rect",{x,y:y(nat+m),width:ww,height:y(nat)-y(nat+m),style:"fill:var(--claret)"},svg);
+      s("text",{x:x+ww/2,y:y(nat+m)-8,"text-anchor":"middle","font-size":13,"font-weight":700,style:"fill:var(--ink)",text:Math.round((nat+m)/300*1000)+"‰"},svg);
+      s("text",{x:x+ww/2,y:H-bottom+18,"text-anchor":"middle","font-size":12,text: m ? m+" víct." : "Sin"},svg);
+      s("text",{x:x+ww/2,y:H-bottom+32,"text-anchor":"middle","font-size":11,text: m ? fmt(m/3,0)+"% pobl." : "asesinatos"},svg);
+    });
+  });
+
+  // Projection
+  chart("proyeccion", (host, w) => {
+    const series = [{m:0,c:"--stone",l:"Sin asesinatos"},{m:6,c:"--sky",l:"6/año"},{m:12,c:"--oxford",l:"12/año"},{m:24,c:"--claret",l:"24/año"}];
+    const H = 280, top = 16, bottom = 30, left = 32, right = w < 480 ? 82 : 110;
+    const svg = s("svg", {viewBox:`0 0 ${w} ${H}`, role:"img", "aria-label":"Proyección de población a 10 años"}, host);
+    const x = t => left + (w-left-right)*t/10, y = v => top + (H-top-bottom)*(1 - v/320);
+    [0,100,200,300].forEach(v=>{ s("line",{x1:left,x2:w-right,y1:y(v),y2:y(v),style:`stroke:var(${v?'--rule':'--ink'})`},svg); s("text",{x:0,y:y(v)+4,"font-size":12,text:v},svg); });
+    [0,2,4,6,8,10].forEach(t=> s("text",{x:x(t),y:H-8,"text-anchor":"middle","font-size":12,text: t===0?"Año 0":t},svg));
+    const ends = [];
+    series.forEach(se=>{ let p = 300, pts = [[0,p]]; for(let t=1;t<=10;t++){ p = Math.max(0, p*(1+0.035-0.033) - se.m); pts.push([t,p]); }
+      s("path",{d:pts.map((q,i)=>(i?"L":"M")+x(q[0]).toFixed(1)+" "+y(q[1]).toFixed(1)).join(" "),style:`fill:none;stroke:var(${se.c});stroke-width:${se.m===24?3:2.2}`},svg);
+      s("circle",{cx:x(10),cy:y(p),r:3.5,style:`fill:var(${se.c})`},svg); ends.push({y:y(p),t:`${se.l}: ${Math.round(p)}`,c:se.c}); });
+    ends.sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<15) ends[i].y = ends[i-1].y+15;
+    ends.forEach(e=> s("text",{x:x(10)+8,y:e.y+4,"font-size":w<480?10.5:12,"font-weight":600,style:`fill:var(${e.c})`,text:e.t},svg));
+  });
+
+  // Model comparison (range bar)
+  chart("modelos", (host, w) => {
+    const H = 150, left = w < 480 ? 0 : 130, right = 16, max = 3600;
+    const svg = s("svg",{viewBox:`0 0 ${w} ${H}`,role:"img","aria-label":"Milicia vecinal 625 po frente a profesional 2.500–3.500 po"},host);
+    const x = v => left + (w-left-right)*v/max;
+    const rows = [{l:"Vecinal (8 + 42)", y:w<480?24:30},{l:"50 profesionales", y:w<480?84:80}];
+    [0,1000,2000,3000].forEach(v=>{ s("line",{x1:x(v),x2:x(v),y1:10,y2:H-24,style:"stroke:var(--rule)"},svg); s("text",{x:x(v),y:H-6,"text-anchor":v?"middle":"start","font-size":12,text:fmt(v)},svg); });
+    rows.forEach(r=>{ if(w<480) s("text",{x:0,y:r.y-6,"font-size":13,style:"fill:var(--ink)",text:r.l},svg); else s("text",{x:0,y:r.y+18,"font-size":13,style:"fill:var(--ink)",text:r.l},svg); });
+    const ry = w<480 ? 0 : 6;
+    s("rect",{x:x(0),y:rows[0].y+ry,width:x(625)-x(0),height:20,style:"fill:var(--oxford)"},svg);
+    s("text",{x:x(625)+6,y:rows[0].y+ry+15,"font-size":13,"font-weight":700,style:"fill:var(--ink)",text:"625"},svg);
+    s("rect",{x:x(0),y:rows[1].y+ry,width:x(2500)-x(0),height:20,style:"fill:var(--claret)"},svg);
+    s("rect",{x:x(2500),y:rows[1].y+ry,width:x(3500)-x(2500),height:20,style:"fill:var(--claret);opacity:.4"},svg);
+    s("text",{x:x(2500)-6,y:rows[1].y+ry+15,"text-anchor":"end","font-size":13,"font-weight":700,style:"fill:var(--paper)",text:"2.500–3.500"},svg);
+    s("line",{x1:x(800),x2:x(800),y1:6,y2:H-24,style:"stroke:var(--ink);stroke-dasharray:4 3"},svg);
+    s("text",{x:x(800)+5,y:16,"font-size":11,style:"fill:var(--ink)",text:"Ingreso municipal total: 800"},svg);
+  });
+
+  /* Simulator */
+  const sp = W("s-pro"), sh = W("s-har"), ss = W("s-sub");
+  function sim(){
+    const p = +sp.value, h = +sh.value/100, sub = +ss.value;
+    W("o-pro").textContent = p+" / 50"; W("o-har").textContent = Math.round(h*100)+"%"; W("o-sub").textContent = fmt(sub)+" po";
+    const inc = (380+125)*h + 45 + sub, out = 800 + (p-8)*50, bal = inc-out;
+    const lab = 160 - p, L = lab/152, grain = Math.max(0, 78.5*h*L - 12), need = 51;
+    W("r-in").textContent = fmt(Math.round(inc)); W("r-out").textContent = fmt(out);
+    const rb = W("r-bal"); rb.textContent = (bal>0?"+":bal<0?"−":"")+fmt(Math.abs(Math.round(bal))); rb.style.color = bal<0 ? "var(--bad)" : "var(--good)";
+    const gmax = 100; const gg = W("g-grain");
+    gg.querySelector(".fill").style.width = Math.min(100, grain/gmax*100)+"%"; gg.querySelector(".fill").style.background = grain < need ? "var(--bad)" : "var(--ochre)";
+    gg.querySelector(".mark").style.left = (need/gmax*100)+"%";
+    W("r-grain").textContent = fmt(grain,1)+" t disponibles";
+    W("g-lab").querySelector(".fill").style.width = (lab/160*100)+"%";
+    W("r-lab").textContent = lab+" de 160"; W("r-labp").textContent = Math.round(lab/160*100)+"%";
+    const money = bal >= 0, food = grain >= need, tight = grain < need + 6;
+    let cls = "", pill = "", txt = "";
+    if (money && food && !tight){ pill = "Viable"; txt = "Las cuentas cuadran y el granero cubre la mesa con algo de margen para ganado, tributos y reserva."; }
+    else if (money && food){ cls="warn"; pill="Al límite"; txt = "Hay dinero, pero el grano apenas cubre lo que come la gente. Un invierno largo o un tributo del conde bastan para el hambre."; }
+    else if (money && !food){ cls="bad"; pill="Hambre con dinero"; txt = sub > 600 ? "La subvención paga a los soldados, pero el oro no se come. Con tantos brazos fuera del campo, la villa depende de grano traído de fuera: dependencia total del castillo." : "El presupuesto aguanta, pero falta grano. Habrá que comprar fuera, vender animales o endeudarse."; }
+    else if (!money && food){ cls="warn"; pill="Déficit fiscal"; txt = "Hay comida, pero no dinero para la guardia. La villa tendría que subir tributos, confiscar o despedir guardias."; }
+    else { cls="bad"; pill="Colapso"; txt = "Ni dinero ni grano. Este escenario solo se sostiene por la fuerza o con recursos externos a gran escala."; }
+    const v = W("verdict"); v.className = "verdict "+cls; v.innerHTML = `<span class="pill ${cls}">${pill}</span>${txt}`;
+  }
+  [sp,sh,ss].forEach(e=>e.addEventListener("input", sim));
+  W("reset").addEventListener("click", ()=>{ sp.value=8; sh.value=100; ss.value=250; sim(); });
+  sim();
+})();
+</script>
+
+</body></html>
